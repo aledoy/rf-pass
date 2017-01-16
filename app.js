@@ -12,6 +12,12 @@ let express = require('express');
 let WebSocket = require('ws');
 let SerialPort = require('serialport');
 
+let parsers = SerialPort.parsers;
+let parser = new parsers.Readline({
+	delimiter: '\r\n'
+});
+
+
 let db;
 
 async.series([
@@ -83,6 +89,8 @@ async.series([
 					baudRate: 57600
 				});
 
+				rfIdPort.pipe(parser);
+
 				rfIdPort.on('error', function (err) {
 					console.error('Error on Serial Port.');
 					console.error(err);
@@ -101,7 +109,7 @@ async.series([
 
 						rfIdPort.write('\x04\x00\x01\xDB\x4B', 'hex');
 
-						/*async.series([
+						async.series([
 							function (cb) {
 								rfIdPort.write(new Buffer('040001DB4B', 'hex'), cb);
 							}
@@ -109,7 +117,7 @@ async.series([
 							if (err) return console.error(err);
 
 
-						});*/
+						});
 
 						/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
 						 $tag: data
@@ -141,7 +149,7 @@ async.series([
 						 });*/
 					});
 
-					rfIdPort.write('\x04\x00\x01\xDB\x4B', 'hex');
+					rfIdPort.write(new Buffer('040001DB4B', 'hex'));
 				});
 
 				done();
