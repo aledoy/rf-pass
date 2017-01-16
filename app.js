@@ -106,7 +106,7 @@ async.series([
 						], function (err) {
 							if (err) return console.error(err);
 
-							console.log(data);
+							console.log(data.toString());
 						});
 
 						/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
