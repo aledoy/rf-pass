@@ -137,7 +137,7 @@ async.series([
 					 });*/
 				});
 
-				rfIdPort.on(function (err) {
+				rfIdPort.open(function (err) {
 					if (err) {
 						console.error(`Error opening port ${port.comName}`);
 						console.error(err);
