@@ -93,6 +93,8 @@ async.series([
 				});
 
 				rfIdPort.on('open', function () {
+					console.log(`Port ${port.comName} has been opened.`);
+
 					rfIdPort.on('data', function (data) {
 						console.log(data);
 
