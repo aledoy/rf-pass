@@ -1,5 +1,6 @@
 'use strict';
 
+const DEVICE_ID = process.env.DEVICE_CODE;
 const PORT = 8080;
 
 let fs = require('fs');
@@ -27,6 +28,18 @@ async.series([
 		});
 	},
 	function (done) {
+		let ws = new WebSocket('ws://54.87.230.167:8052');
+
+		ws.on('open', function open() {
+			console.log('Websocket Connection to Reekoh initialized.');
+			done();
+		});
+
+		ws.on('message', function (data) {
+			console.log(data);
+		});
+	},
+	function (done) {
 		let app = express();
 		let server = http.createServer(app);
 		let wss = new WebSocket.Server({server: server});
@@ -50,6 +63,15 @@ async.series([
 			});
 		};
 
+		wss.on('error', function (err) {
+			console.error('Error on Websocket Server.');
+			console.error(err);
+
+			setTimeout(function () {
+				process.exit(1);
+			}, 3000);
+		});
+
 		wss.on('connection', function connection(ws) {
 			ws.on('message', function incoming(message) {
 				console.log('received: %s', message);
@@ -59,6 +81,10 @@ async.series([
 		rfIdPort.on('error', function (err) {
 			console.error('Error on Serial Port.');
 			console.error(err);
+
+			setTimeout(function () {
+				process.exit(1);
+			}, 3000);
 		});
 
 		rfIdPort.on('data', function (data) {
@@ -97,6 +123,10 @@ async.series([
 		rfIdPort.open(function (err) {
 			console.error('Error opening Serial Port.');
 			console.error(err);
+
+			setTimeout(function () {
+				process.exit(1);
+			}, 3000);
 		});
 
 		server.listen(PORT, done);
