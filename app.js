@@ -96,7 +96,11 @@ async.series([
 					console.log(`Port ${port.comName} has been opened.`);
 
 					rfIdPort.on('data', function (data) {
-						console.log(data.toString());
+						console.log('UTF-8', data.toString());
+						console.log('HEX', data.toString());
+
+						rfIdPort.write('\x04\x00\x01\xDB\x4B');
+
 						/*async.series([
 							function (cb) {
 								rfIdPort.write(new Buffer('040001DB4B', 'hex'), cb);
@@ -137,7 +141,7 @@ async.series([
 						 });*/
 					});
 
-					rfIdPort.write(new Buffer('040001DB4B', 'hex'));
+					rfIdPort.write('\x04\x00\x01\xDB\x4B');
 				});
 
 				done();
