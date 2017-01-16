@@ -12,11 +12,6 @@ let express = require('express');
 let WebSocket = require('ws');
 let SerialPort = require('serialport');
 
-let parsers = SerialPort.parsers;
-let parser = new parsers.readline({
-	delimiter: '\r\n'
-});
-
 let db;
 
 async.series([
@@ -85,7 +80,8 @@ async.series([
 				console.log(port);
 
 				let rfIdPort =  new SerialPort(port.comName, {
-					baudRate: 57600
+					baudRate: 57600,
+					parser: SerialPort.parsers.readline('\n')
 				});
 
 				rfIdPort.on('error', function (err) {
@@ -100,7 +96,7 @@ async.series([
 				rfIdPort.on('open', function () {
 					console.log(`Port ${port.comName} has been opened.`);
 
-					parser.on('data', function (data) {
+					rfIdPort.on('data', function (data) {
 						async.series([
 							function (cb) {
 								rfIdPort.write(new Buffer('040001DB4B', 'hex'), cb);
@@ -142,7 +138,6 @@ async.series([
 						 });*/
 					});
 
-					rfIdPort.pipe(parser);
 					rfIdPort.write(new Buffer('040001DB4B', 'hex'));
 				});
 
