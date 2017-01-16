@@ -19,7 +19,7 @@ async.series([
 		db = new sqlite3.Database('./db/rb.db', done);
 	},
 	function (done) {
-		db.serialize(function() {
+		db.serialize(function () {
 			db.run('CREATE TABLE IF NOT EXISTS attendance(id INTEGER PRIMARY KEY, write_date DATETIME, create_date DATETIME, full_name TEXT, country_represented INT, rfid_tag TEXT, attendance_id INT, id_photo BLOB, country_image BLOB)');
 			db.run('CREATE TABLE IF NOT EXISTS country(id INTEGER PRIMARY KEY,name TEXT, image BLOB)');
 			db.run('CREATE TABLE IF NOT EXISTS meeting_log(id INTEGER PRIMARY KEY AUTOINCREMENT, write_date DATETIME, rfid_tag TEXT, machine_code TEXT, sync INT)');
@@ -87,46 +87,48 @@ async.series([
 			}, 3000);
 		});
 
-		rfIdPort.on('data', function (data) {
-			console.log(data);
-
-			/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
-				$tag: data
-			}, function (err, row) {
-				let msg = '';
-
-				if (err || !row) {
-					msg = `<div class="content-bg">
-                                <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-                                <br/>
-                                <br/><br/>
-                                <h1 class="participant">Access Denied.</h1>
-                                <br/>
-                            </div>`;
-				}
-				else {
-					msg = `<div class="content-bg">
-                                <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-                                <br/>
-                                <img src="data:;base64,${row.a.id_photo}" class="wide-img main-img img-responsive center-block" />
-                                <br/><br/>
-                                <h1 class="participant">${row.a.full_name}</h1>
-                                <br/>
-                                <img src="data:;base64,${row.c.image}" class="img-flag main-img img-responsive center-block" />
-                            </div>`;
-				}
-
-				wss.broadcast(msg);
-			});*/
-		});
-
 		rfIdPort.open(function (err) {
-			console.error('Error opening Serial Port.');
-			console.error(err);
+			if (err) {
+				console.error('Error opening Serial Port.');
+				console.error(err);
 
-			setTimeout(function () {
-				process.exit(1);
-			}, 3000);
+				return setTimeout(function () {
+					process.exit(1);
+				}, 3000);
+			}
+
+			rfIdPort.on('data', function (data) {
+				console.log(data);
+
+				/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
+				 $tag: data
+				 }, function (err, row) {
+				 let msg = '';
+
+				 if (err || !row) {
+				 msg = `<div class="content-bg">
+				 <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+				 <br/>
+				 <br/><br/>
+				 <h1 class="participant">Access Denied.</h1>
+				 <br/>
+				 </div>`;
+				 }
+				 else {
+				 msg = `<div class="content-bg">
+				 <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+				 <br/>
+				 <img src="data:;base64,${row.a.id_photo}" class="wide-img main-img img-responsive center-block" />
+				 <br/><br/>
+				 <h1 class="participant">${row.a.full_name}</h1>
+				 <br/>
+				 <img src="data:;base64,${row.c.image}" class="img-flag main-img img-responsive center-block" />
+				 </div>`;
+				 }
+
+				 wss.broadcast(msg);
+				 });*/
+			});
 		});
 
 		server.listen(PORT, done);
