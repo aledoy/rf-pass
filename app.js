@@ -81,7 +81,7 @@ async.series([
 
 				let rfIdPort = new SerialPort(port.comName, {
 					baudRate: 57600,
-					parser: SerialPort.parsers.byteLength(5),
+					parser: SerialPort.parsers.byteLength(24),
 					autoOpen: false
 				});
 
