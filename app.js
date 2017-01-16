@@ -104,11 +104,6 @@ async.series([
 					console.log(`Port ${port.comName} has been opened.`);
 
 					rfIdPort.on('data', function (data) {
-						console.log('UTF-8', data.toString());
-						console.log('HEX', data.toString());
-
-						rfIdPort.write('\x04\x00\x01\xDB\x4B', 'hex');
-
 						async.series([
 							function (cb) {
 								rfIdPort.write(new Buffer('040001DB4B', 'hex'), cb);
@@ -116,7 +111,8 @@ async.series([
 						], function (err) {
 							if (err) return console.error(err);
 
-
+							console.log('UTF-8', data.toString());
+							console.log('HEX', data.toString());
 						});
 
 						/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
