@@ -81,7 +81,6 @@ async.series([
 
 				let rfIdPort = new SerialPort(port.comName, {
 					baudRate: 57600,
-					parser: SerialPort.parsers.byteLength(24),
 					autoOpen: false
 				});
 
@@ -101,7 +100,7 @@ async.series([
 					async.series([
 						function (cb) {
 							console.log('Writing...');
-							rfIdPort.write(new Buffer('040001DB4B', 'hex'), cb);
+							rfIdPort.write('\x04\x00\x01\xDB\x4B', cb);
 						}
 					], function (err) {
 						if (err) return console.error(err);
@@ -149,7 +148,7 @@ async.series([
 
 
 					console.log(`Port ${port.comName} has been opened.`);
-					rfIdPort.write(new Buffer('040001DB4B', 'hex'));
+					rfIdPort.write('\x04\x00\x01\xDB\x4B');
 				});
 
 				done();
