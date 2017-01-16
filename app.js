@@ -95,7 +95,7 @@ async.series([
 
 				rfIdPort.on('data', function (data) {
 					console.log('UTF-8', data.toString());
-					console.log('HEX', data.toString());
+					console.log('HEX', data.toString('hex'));
 
 					async.series([
 						function (cb) {
