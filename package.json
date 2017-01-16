@@ -1,0 +1,25 @@
+{
+  "name": "rf-pass",
+  "version": "1.0.0",
+  "description": "RFID Person Authentication",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Reekoh/rf-pass.git"
+  },
+  "author": "Reekoh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Reekoh/rf-pass/issues"
+  },
+  "dependencies": {
+    "async": "^2.1.4",
+    "express": "^4.14.0",
+    "serialport": "^4.0.7",
+    "sqlite3": "^3.1.8",
+    "ws": "^1.1.1"
+  }
+}
