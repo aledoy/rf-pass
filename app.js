@@ -95,9 +95,8 @@ async.series([
 				rfIdPort.on('open', function () {
 					console.log(`Port ${port.comName} has been opened.`);
 
-					rfIdPort.write(new Buffer('040001DB4B'));
-
 					rfIdPort.on('data', function (data) {
+						rfIdPort.flush();
 						rfIdPort.write(new Buffer('040001DB4B'));
 
 						console.log(data);
@@ -131,6 +130,9 @@ async.series([
 						 wss.broadcast(msg);
 						 });*/
 					});
+
+					rfIdPort.flush();
+					rfIdPort.write(new Buffer('040001DB4B'));
 				});
 
 				done();
