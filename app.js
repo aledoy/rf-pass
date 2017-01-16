@@ -81,7 +81,8 @@ async.series([
 
 				let rfIdPort =  new SerialPort(port.comName, {
 					baudRate: 57600,
-					parser: SerialPort.parsers.readline('\n')
+					parser: SerialPort.parsers.readline('\n'),
+					autoOpen: false
 				});
 
 				rfIdPort.on('error', function (err) {
@@ -93,51 +94,61 @@ async.series([
 					}, 3000);
 				});
 
-				rfIdPort.on('open', function () {
-					console.log(`Port ${port.comName} has been opened.`);
+				rfIdPort.on('data', function (data) {
+					console.log('UTF-8', data.toString());
+					console.log('HEX', data.toString());
 
-					rfIdPort.on('data', function (data) {
-						async.series([
-							function (cb) {
-								rfIdPort.write(new Buffer('040001DB4B', 'hex'), cb);
-							}
-						], function (err) {
-							if (err) return console.error(err);
-
-							console.log('UTF-8', data.toString());
-							console.log('HEX', data.toString());
-						});
-
-						/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
-						 $tag: data
-						 }, function (err, row) {
-						 let msg = '';
-
-						 if (err || !row) {
-						 msg = `<div class="content-bg">
-						 <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-						 <br/>
-						 <br/><br/>
-						 <h1 class="participant">Access Denied.</h1>
-						 <br/>
-						 </div>`;
-						 }
-						 else {
-						 msg = `<div class="content-bg">
-						 <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-						 <br/>
-						 <img src="data:;base64,${row.a.id_photo}" class="wide-img main-img img-responsive center-block" />
-						 <br/><br/>
-						 <h1 class="participant">${row.a.full_name}</h1>
-						 <br/>
-						 <img src="data:;base64,${row.c.image}" class="img-flag main-img img-responsive center-block" />
-						 </div>`;
-						 }
-
-						 wss.broadcast(msg);
-						 });*/
+					async.series([
+						function (cb) {
+						console.log('Writing...');
+							rfIdPort.write(new Buffer('040001DB4B', 'hex'), cb);
+						}
+					], function (err) {
+						if (err) return console.error(err);
 					});
 
+					/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
+					 $tag: data
+					 }, function (err, row) {
+					 let msg = '';
+
+					 if (err || !row) {
+					 msg = `<div class="content-bg">
+					 <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+					 <br/>
+					 <br/><br/>
+					 <h1 class="participant">Access Denied.</h1>
+					 <br/>
+					 </div>`;
+					 }
+					 else {
+					 msg = `<div class="content-bg">
+					 <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+					 <br/>
+					 <img src="data:;base64,${row.a.id_photo}" class="wide-img main-img img-responsive center-block" />
+					 <br/><br/>
+					 <h1 class="participant">${row.a.full_name}</h1>
+					 <br/>
+					 <img src="data:;base64,${row.c.image}" class="img-flag main-img img-responsive center-block" />
+					 </div>`;
+					 }
+
+					 wss.broadcast(msg);
+					 });*/
+				});
+
+				rfIdPort.on(function (err) {
+					if (err) {
+						console.error(`Error opening port ${port.comName}`);
+						console.error(err);
+
+						return setTimeout(function () {
+							process.exit(1);
+						}, 3000);
+					}
+
+
+					console.log(`Port ${port.comName} has been opened.`);
 					rfIdPort.write(new Buffer('040001DB4B', 'hex'));
 				});
 
