@@ -81,10 +81,6 @@ async.series([
 		rfIdPort.on('error', function (err) {
 			console.error('Error on Serial Port.');
 			console.error(err);
-
-			setTimeout(function () {
-				process.exit(1);
-			}, 3000);
 		});
 
 		rfIdPort.open(function (err) {
