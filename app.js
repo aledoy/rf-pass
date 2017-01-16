@@ -99,7 +99,7 @@ async.series([
 						console.log('UTF-8', data.toString());
 						console.log('HEX', data.toString());
 
-						rfIdPort.write('\x04\x00\x01\xDB\x4B');
+						rfIdPort.write('\x04\x00\x01\xDB\x4B', 'hex');
 
 						/*async.series([
 							function (cb) {
@@ -141,7 +141,7 @@ async.series([
 						 });*/
 					});
 
-					rfIdPort.write('\x04\x00\x01\xDB\x4B');
+					rfIdPort.write('\x04\x00\x01\xDB\x4B', 'hex');
 				});
 
 				done();
