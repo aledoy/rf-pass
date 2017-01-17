@@ -7,6 +7,7 @@ $(document).ready(function () {
 	var flag = $('#flag');
 	var main = $('#main');
 	var upper_logo = $('#upper_logo');
+	var rfidtag = $('#rfidtag');
 
 	var socket = new WebSocket("ws://localhost:8080")
 	var numbers_received = [];
@@ -30,10 +31,10 @@ $(document).ready(function () {
 		socket.send(message.data);
 	};
 
-	$("#cmd_send").click(function (ev) {
-		ev.preventDefault();
-		var cmd = $('#cmd_value').val();
-		sendMessage({'data': cmd});
-		$('#cmd_value').val("");
+	rfidtag.focus();
+	rfidtag.hide();
+
+	rfidtag.on("change paste keyup", function() {
+		socket.send($(this).val());
 	});
 });

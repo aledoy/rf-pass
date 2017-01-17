@@ -1,6 +1,6 @@
 'use strict';
 
-const DEVICE_ID = process.env.DEVICE_CODE;
+const DEVICE_ID = process.env.DEVICE_ID;
 const PORT = 8080;
 
 let fs = require('fs');
@@ -53,10 +53,9 @@ async.series([
 		});
 
 		wss.broadcast = function broadcast(data) {
-			wss.clients.forEach(function each(client) {
-				if (client.readyState === WebSocket.OPEN) {
-					client.send(data);
-				}
+			async.each(wss.clients, function (client, cb) {
+				if (client.readyState === WebSocket.OPEN) client.send(data);
+				cb();
 			});
 		};
 
@@ -70,35 +69,47 @@ async.series([
 		});
 
 		wss.on('connection', function connection(ws) {
-			ws.on('message', function incoming(message) {
+			ws.on('message', function (message) {
 				console.log('received: %s', message);
 			});
 		});
 
-		let reader = readline.createInterface({
+		/*let reader = readline.createInterface({
 			input: process.stdin,
 			output: process.stdout,
 			terminal: false
 		});
 
 		reader.on('line', function (line) {
-			console.log(line);
-
 			db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
 				$tag: line
 			}, function (err, row) {
 				let msg = '';
 
 				if (err || !row) {
-					msg = `<div class="content-bg"><img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/><br/><br/><br/><h1 class="participant">Access Denied.</h1><br/></div>`;
+					msg = `<div class="content-bg">
+                                <img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+                                <br/>
+                                <img src="/assets/avatar.png" class="wide-img main-img img-responsive center-block" />
+                                <br/><br/>
+                                <h1 class="participant">${row.full_name || ''}</h1>
+                            </div>`;
 				}
 				else {
-					msg = `<div class="content-bg"><img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/><br/><img src="data:;base64,${row.a.id_photo}" class="wide-img main-img img-responsive center-block" /><br/><br/><h1 class="participant">${row.a.full_name}</h1><br/><img src="data:;base64,${row.c.image}" class="img-flag main-img img-responsive center-block" /></div>`;
+					msg = `<div class="content-bg">
+                                <img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+                                <br/>
+                                <img src="data:;base64,${row.id_photo}" class="wide-img main-img img-responsive center-block" />
+                                <br/><br/>
+                                <h1 class="participant">${row.full_name}</h1>
+                                <br/>
+                                <img src="data:;base64,${row.image}" class="img-flag main-img img-responsive center-block" />
+                            </div>`;
 				}
 
 				wss.broadcast(msg);
 			});
-		});
+		});*/
 
 		server.listen(PORT, done);
 	}
