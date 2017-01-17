@@ -9,6 +9,7 @@ let http = require('http');
 let async = require('async');
 let sqlite3 = require('sqlite3').verbose();
 let express = require('express');
+let readline = require('readline');
 let WebSocket = require('ws');
 let SerialPort = require('serialport');
 
@@ -77,11 +78,15 @@ async.series([
 
 		SerialPort.list(function (err, ports) {
 			async.each(ports, function (port, done) {
+				if (!/^\/dev\/ttyUSB/.test(port.comName)) return done();
+
 				console.log(port);
 
 				let rfIdPort = new SerialPort(port.comName, {
 					baudRate: 57600,
-					parser: SerialPort.parsers.readline(null, 'hex'),
+					parser: function(emitter, buffer) {
+						emitter.emit('data', buffer.toString('hex'));
+					},
 					autoOpen: false
 				});
 
@@ -94,43 +99,31 @@ async.series([
 					}, 3000);
 				});
 
-				rfIdPort.on('data', function (data) {
-					console.log('Data', data);
+				/*rfIdPort.on('data', function (data) {
+					db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
+						$tag: data
+					}, function (err, row) {
+						let msg = '';
 
-					setTimeout(function () {
-						rfIdPort.flush(function () {
-							rfIdPort.write(new Buffer('040001DB4B', 'hex'));
-						});
-					}, 2000);
+						if (err || !row) {
+							msg = `<div class="content-bg"><img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/><br/><br/><br/><h1 class="participant">Access Denied.</h1><br/></div>`;
+						}
+						else {
+							msg = `<div class="content-bg"><img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/><br/><img src="data:;base64,${row.a.id_photo}" class="wide-img main-img img-responsive center-block" /><br/><br/><h1 class="participant">${row.a.full_name}</h1><br/><img src="data:;base64,${row.c.image}" class="img-flag main-img img-responsive center-block" /></div>`;
+						}
 
-					/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
-					 $tag: data
-					 }, function (err, row) {
-					 let msg = '';
+						wss.broadcast(msg);
+					});
+				});*/
 
-					 if (err || !row) {
-					 msg = `<div class="content-bg">
-					 <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-					 <br/>
-					 <br/><br/>
-					 <h1 class="participant">Access Denied.</h1>
-					 <br/>
-					 </div>`;
-					 }
-					 else {
-					 msg = `<div class="content-bg">
-					 <img src="/static/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-					 <br/>
-					 <img src="data:;base64,${row.a.id_photo}" class="wide-img main-img img-responsive center-block" />
-					 <br/><br/>
-					 <h1 class="participant">${row.a.full_name}</h1>
-					 <br/>
-					 <img src="data:;base64,${row.c.image}" class="img-flag main-img img-responsive center-block" />
-					 </div>`;
-					 }
+				let reader = readline.createInterface({
+					input: rfIdPort,
+					output: process.stdout,
+					terminal: true
+				});
 
-					 wss.broadcast(msg);
-					 });*/
+				reader.on('line', function (line) {
+					console.log(line);
 				});
 
 				rfIdPort.open(function (err) {
@@ -144,8 +137,8 @@ async.series([
 					}
 
 					console.log(`Port ${port.comName} has been opened.`);
-					rfIdPort.flush(function () {
-						rfIdPort.write(new Buffer('040001DB4B', 'hex'));
+					rfIdPort.write(new Buffer('040001DB4B', 'hex'), function () {
+						rfIdPort.flush();
 					});
 				});
 
