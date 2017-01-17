@@ -97,14 +97,11 @@ async.series([
 					console.log('UTF-8', data.toString());
 					console.log('HEX', data.toString('hex'));
 
-					async.series([
-						function (cb) {
-							console.log('Writing...');
-							rfIdPort.write('\x04\x00\x01\xDB\x4B', cb);
-						}
-					], function (err) {
-						if (err) return console.error(err);
-					});
+					setTimeout(function () {
+						rfIdPort.flush(function () {
+							rfIdPort.write(new Buffer('040001DB4B', 'hex'));
+						});
+					}, 2000);
 
 					/*db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
 					 $tag: data
@@ -146,9 +143,10 @@ async.series([
 						}, 3000);
 					}
 
-
 					console.log(`Port ${port.comName} has been opened.`);
-					rfIdPort.write('\x04\x00\x01\xDB\x4B');
+					rfIdPort.flush(function () {
+						rfIdPort.write(new Buffer('040001DB4B', 'hex'));
+					});
 				});
 
 				done();
