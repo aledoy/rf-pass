@@ -81,6 +81,7 @@ async.series([
 
 				let rfIdPort = new SerialPort(port.comName, {
 					baudRate: 57600,
+					parser: SerialPort.parsers.readline(null, 'hex'),
 					autoOpen: false
 				});
 
@@ -94,8 +95,7 @@ async.series([
 				});
 
 				rfIdPort.on('data', function (data) {
-					console.log('UTF-8', data.toString());
-					console.log('HEX', data.toString('hex'));
+					console.log('Data', data);
 
 					setTimeout(function () {
 						rfIdPort.flush(function () {
