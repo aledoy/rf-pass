@@ -96,8 +96,6 @@ async.series([
 
 				rfIdPort.on('data', function (data) {
 					console.log(data.toString('hex'));
-
-
 				});
 
 				/*let reader = readline.createInterface({
@@ -150,6 +148,7 @@ async.series([
 					}
 
 					console.log(`Port ${port.comName} has been opened.`);
+					rfIdPort.write(new Buffer('0081', 'hex'));
 				});
 
 				done();
