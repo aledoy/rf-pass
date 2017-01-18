@@ -28,17 +28,17 @@ async.series([
 		});
 	},
 	/*function (done) {
-		let ws = new WebSocket('ws://54.87.230.167:8052');
+	 let ws = new WebSocket('ws://54.87.230.167:8052');
 
-		ws.on('open', function open() {
-			console.log('Websocket Connection to Reekoh initialized.');
-			done();
-		});
+	 ws.on('open', function open() {
+	 console.log('Websocket Connection to Reekoh initialized.');
+	 done();
+	 });
 
-		ws.on('message', function (data) {
-			console.log(data);
-		});
-	},*/
+	 ws.on('message', function (data) {
+	 console.log(data);
+	 });
+	 },*/
 	function (done) {
 		let app = express();
 		let server = http.createServer(app);
@@ -74,29 +74,47 @@ async.series([
 			});
 		});
 
-		/*let reader = readline.createInterface({
-			input: process.stdin,
-			output: process.stdout,
-			terminal: false
-		});
+		SerialPort.list(function (err, ports) {
+			async.each(ports, function (port, done) {
+				console.log(port);
 
-		reader.on('line', function (line) {
-			db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
-				$tag: line
-			}, function (err, row) {
-				let msg = '';
+				let rfIdPort = new SerialPort(port.comName, {
+					baudRate: 115200,
+					autoOpen: false
+				});
 
-				if (err || !row) {
-					msg = `<div class="content-bg">
+				rfIdPort.on('error', function (err) {
+					console.error('Error on Serial Port.');
+					console.error(err);
+
+					setTimeout(function () {
+						process.exit(1);
+					}, 3000);
+				});
+
+				let reader = readline.createInterface({
+					input: rfIdPort,
+					output: process.stdout,
+					terminal: false
+				});
+
+				reader.on('line', function (line) {
+					db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
+						$tag: line
+					}, function (err, row) {
+						let msg = '';
+
+						if (err || !row) {
+							msg = `<div class="content-bg">
                                 <img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
                                 <br/>
                                 <img src="/assets/avatar.png" class="wide-img main-img img-responsive center-block" />
                                 <br/><br/>
                                 <h1 class="participant">${row.full_name || ''}</h1>
                             </div>`;
-				}
-				else {
-					msg = `<div class="content-bg">
+						}
+						else {
+							msg = `<div class="content-bg">
                                 <img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
                                 <br/>
                                 <img src="data:;base64,${row.id_photo}" class="wide-img main-img img-responsive center-block" />
@@ -105,11 +123,28 @@ async.series([
                                 <br/>
                                 <img src="data:;base64,${row.image}" class="img-flag main-img img-responsive center-block" />
                             </div>`;
-				}
+						}
 
-				wss.broadcast(msg);
+						wss.broadcast(msg);
+					});
+				});
+
+				rfIdPort.open(function (err) {
+					if (err) {
+						console.error(`Error opening port ${port.comName}`);
+						console.error(err);
+
+						return setTimeout(function () {
+							process.exit(1);
+						}, 3000);
+					}
+
+					console.log(`Port ${port.comName} has been opened.`);
+				});
+
+				done();
 			});
-		});*/
+		});
 
 		server.listen(PORT, done);
 	}

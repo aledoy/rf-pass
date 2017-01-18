@@ -32,9 +32,10 @@ $(document).ready(function () {
 	};
 
 	rfidtag.focus();
-	rfidtag.hide();
+	//rfidtag.hide();
 
-	rfidtag.on("change paste keyup", function() {
+	rfidtag.on("change", function () {
 		socket.send($(this).val());
+		$(this).val('');
 	});
 });
