@@ -11,6 +11,7 @@ let sqlite3 = require('sqlite3').verbose();
 let express = require('express');
 let readline = require('readline');
 let WebSocket = require('ws');
+let SerialPort = require('serialport');
 
 let db;
 
@@ -99,6 +100,8 @@ async.series([
 				});
 
 				reader.on('line', function (line) {
+					console.log(line);
+
 					db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
 						$tag: line
 					}, function (err, row) {
