@@ -1,5 +1,6 @@
 'use strict';
 
+let async = require('async');
 let SerialPort = require('serialport');
 
 SerialPort.list(function (err, ports) {
