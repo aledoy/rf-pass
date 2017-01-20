@@ -27,14 +27,6 @@ module.exports = {
 					}, 3000);
 				});
 
-				rfIdPort.on('data', function (data) {
-					console.log('Data', data);
-
-					rfIdPort.flush(function () {
-						rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
-					});
-				});
-
 				rfIdPort.open(function (err) {
 					if (err) {
 						console.error(`Error opening port ${port.comName}`);
