@@ -39,8 +39,8 @@ async.series({
 			console.log(data);
 
 			if (data && data.length === 24) {
-				result.cache.get(data, function (err, result) {
-					if (err || result) return;
+				result.cache.get(data, function (err, cacheResult) {
+					if (err || cacheResult) return;
 
 					result.cache.put(data, function () {
 						result.db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
