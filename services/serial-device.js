@@ -15,6 +15,7 @@ module.exports = {
 
 				let rfIdPort = new SerialPort(port.comName, {
 					baudRate: 57600,
+					parser: require('./parser').serial(),
 					autoOpen: false
 				});
 
