@@ -7,7 +7,6 @@ $(document).ready(function () {
 	var flag = $('#flag');
 	var main = $('#main');
 	var upper_logo = $('#upper_logo');
-	var rfidtag = $('#rfidtag');
 
 	var socket = new WebSocket("ws://localhost:8080")
 	var numbers_received = [];
@@ -30,12 +29,4 @@ $(document).ready(function () {
 		console.log("sending:" + message.data);
 		socket.send(message.data);
 	};
-
-	rfidtag.focus();
-	//rfidtag.hide();
-
-	rfidtag.on("change", function () {
-		socket.send($(this).val());
-		$(this).val('');
-	});
 });
