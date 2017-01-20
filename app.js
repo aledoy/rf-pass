@@ -72,24 +72,24 @@ async.series({
 
 							result.server.broadcast(msg);
 
-							result.device.flush(function () {
+							/*result.device.flush(function () {
 								result.device.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
-							});
+							});*/
 						});
 					});
 				});
 			}
-			else {
+			/*else {
 				result.device.flush(function () {
 					result.device.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
 				});
-			}
+			}*/
 		}
-		else {
+		/*else {
 			result.device.flush(function () {
 				result.device.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
 			});
-		}
+		}*/
 	});
 
 	result.device.open(function (err) {
