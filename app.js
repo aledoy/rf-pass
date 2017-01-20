@@ -41,7 +41,7 @@ async.series({
 					if (err || cacheResult) return;
 
 					result.cache.put(data, function () {
-						result.db.get('SELECT a.id, a.full_name, a.id_photo, c.image FROM attendance a left join country c on c.name = a.country_represented where a.rfid_tag = $tag', {
+						result.db.get('SELECT full_name, id_photo FROM attendance where rfid_tag = $tag', {
 							$tag: data
 						}, function (err, row) {
 							let msg = '';
@@ -50,7 +50,7 @@ async.series({
 								msg = `<div class="content-bg">
                                 <img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
                                 <br/><br/><br/><br/><br/><br/>
-                                <img src="/assets/avatar.png" class="wide-img main-img img-responsive center-block" />
+                                <img src="/assets/headshot_empty.gif" class="wide-img main-img img-responsive center-block" />
                                 <br/><br/>
                                 <h1 class="participant">${(row) ? row.full_name : ''}</h1>
                             </div>`;
@@ -62,8 +62,6 @@ async.series({
                                 <img src="data:;base64,${row.id_photo}" class="wide-img main-img img-responsive center-block" />
                                 <br/><br/>
                                 <h1 class="participant">${row.full_name}</h1>
-                                <br/>
-                                <img src="data:;base64,${row.image}" class="img-flag main-img img-responsive center-block" />
                             </div>`;
 							}
 
