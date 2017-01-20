@@ -3,6 +3,7 @@
 const DEVICE_ID = process.env.DEVICE_ID;
 
 let async = require('async');
+let tag = '';
 
 async.series({
 	db: function (done) {
@@ -33,10 +34,6 @@ async.series({
 
 	result.device.on('data', function (data) {
 		if (data) {
-			data = data.toString('hex');
-			data = data.substring(12, 36);
-			data = data.toUpperCase();
-
 			console.log(data);
 
 			if (data && data.length === 24) {
