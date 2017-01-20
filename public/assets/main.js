@@ -9,7 +9,7 @@ var flag = $('#flag');
 var main = $('#main');
 var upper_logo = $('#upper_logo');
 
-var socket = new WebSocket("ws://0.0.0.0:8000/ws");
+var socket = new WebSocket("ws://0.0.0.0:8080");
 var numbers_received = [];
  
 socket.onopen = function(){  
@@ -20,7 +20,7 @@ socket.onmessage = function (message) {
   console.log("receiving: " + message.data);
 
   var res = message.data
-  flag='<img src="/static/CARD_LOGO.png"  class="wide-img main-img img-responsive center-block"/>'
+  flag='<img src="/assets/CARD_LOGO.png"  class="wide-img main-img img-responsive center-block"/>'
   current.html(res).show().delay(15000).fadeOut();
 
 
