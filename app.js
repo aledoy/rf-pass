@@ -35,6 +35,7 @@ async.series({
 		if (data) {
 			data = data.toString('hex');
 			data = data.substring(12, 36);
+			data = data.toUpperCase();
 
 			console.log(data);
 
