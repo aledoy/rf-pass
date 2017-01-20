@@ -93,7 +93,7 @@ async.series({
 
 	result.device.open(function (err) {
 		if (err) {
-			console.error(`Error opening port ${port.comName}`);
+			console.error(`Error opening port ${result.device.comName}`);
 			console.error(err);
 
 			return setTimeout(function () {
