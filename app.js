@@ -101,7 +101,7 @@ async.series({
 			}, 3000);
 		}
 
-		console.log(`Port ${port.comName} has been opened.`);
+		console.log(`Port ${result.device.comName} has been opened.`);
 		result.device.flush(function () {
 			result.device.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
 		});
