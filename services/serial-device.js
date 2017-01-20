@@ -27,22 +27,6 @@ module.exports = {
 					}, 3000);
 				});
 
-				rfIdPort.open(function (err) {
-					if (err) {
-						console.error(`Error opening port ${port.comName}`);
-						console.error(err);
-
-						return setTimeout(function () {
-							process.exit(1);
-						}, 3000);
-					}
-
-					console.log(`Port ${port.comName} has been opened.`);
-					rfIdPort.flush(function () {
-						rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
-					});
-				});
-
 				device = rfIdPort;
 				done();
 			}, function (err) {
