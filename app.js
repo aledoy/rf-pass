@@ -49,7 +49,7 @@ async.series({
 							if (err || !row) {
 								msg = `<div class="content-bg">
                                 <img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-                                <br/>
+                                <br/><br/><br/><br/><br/><br/>
                                 <img src="/assets/avatar.png" class="wide-img main-img img-responsive center-block" />
                                 <br/><br/>
                                 <h1 class="participant">${(row) ? row.full_name : ''}</h1>
@@ -58,7 +58,7 @@ async.series({
 							else {
 								msg = `<div class="content-bg">
                                 <img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-                                <br/>
+                                <br/><br/><br/><br/><br/><br/>
                                 <img src="data:;base64,${row.id_photo}" class="wide-img main-img img-responsive center-block" />
                                 <br/><br/>
                                 <h1 class="participant">${row.full_name}</h1>
