@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>ASEAN</title>
+	<title>ASEAN 2017</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/bootstrap.min.css">
 	<style>
-
 		.main-img {
 			outline: 1 px solid darkblue;
 		}
 		.wide-img {
 			width:70%;
 		}
+
 		.participant{
 			font-size:4em;
 			color:blue;
 			padding: Auto 10px;
 		}
 
-		.img-flag{
-			width: 40%;
-			outline: 1 px solid darkblue;
-		}
 		.content-bg{
 			background-color: white;
 		}
@@ -34,34 +30,19 @@
 			background-attachment: fixed;
 			background-position: center;
 		}
-
-		.forms{
-			text-align: center;
-		}
-
-		#cmd_value{
-			border:none;
-		}
 	</style>
 </head>
 <body>
-<div class="forms">
-	<input type="text" id="cmd_value">
-</div>
-
-<div class="container" id="main">
-	<div class="row">
-		<div id="current" class="text-center">
+	<div class="container" id="main">
+		<div class="row">
+			<div id="current" class="text-center">
+			</div>
 		</div>
 	</div>
-</div>
-
-
-
-<script src="assets/jquery.min.js"></script>
-<script src="assets/bootstrap.min.js"></script>
-<script type="text/javascript" src="assets/main.js"></script>
-
+	<script src="assets/jquery.min.js"></script>
+	<script src="assets/bootstrap.min.js"></script>
+	<script src="assets/socket.io.min.js"></script>
+	<script type="text/javascript" src="assets/main.js"></script>
 </body>
 </html>
 
