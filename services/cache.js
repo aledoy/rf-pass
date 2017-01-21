@@ -1,7 +1,10 @@
 'use strict';
 
 const NodeCache = require('node-cache');
-const myCache = new NodeCache({stdTTL: 5, checkperiod: 5});
+const myCache = new NodeCache({
+	stdTTL: 5,
+	checkperiod: 5
+});
 
 module.exports = {
 	put: function (key, callback) {
