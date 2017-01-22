@@ -10,8 +10,8 @@ module.exports = {
 
 			let tmp = buffer.toString('hex');
 
-			if (tmp.lastIndexOf('130001') >= 0 && !start) {
-				data = `${tmp}`.substr(tmp.lastIndexOf('130001'));
+			if (tmp.indexOf('130001') >= 0 && !start) {
+				data = `${tmp}`.substr(tmp.indexOf('130001'));
 				start = true;
 			}
 			else if (start) {
