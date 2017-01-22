@@ -1,7 +1,7 @@
 {
   "apps": [
 	{
-	  "name": "rfid-pass",
+	  "name": "rf-pass",
 	  "cwd": "/home/pi/rf-pass",
 	  "script": "app.js",
 	  "exec_mode": "cluster",
