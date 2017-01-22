@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config()
+
 let map = require('lodash.map');
 let path = require('path');
 let async = require('async');
