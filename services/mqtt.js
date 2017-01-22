@@ -23,7 +23,7 @@ module.exports = {
 		});
 
 		mqttClient.on('connect', function () {
-			console.log('Connected to Reekoh MQTT Server');
+			console.log('MQTT Client connected to server.');
 
 			mqttClient.subscribe(options.machineCode);
 

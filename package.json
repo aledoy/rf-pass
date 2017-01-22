@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "async": "=2.1.4",
+    "dotenv": "=4.0.0",
     "express": "=4.14.0",
     "lodash.includes": "=4.3.0",
     "lodash.isempty": "=4.4.0",
