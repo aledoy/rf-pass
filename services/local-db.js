@@ -13,13 +13,13 @@ module.exports = {
 
 			async.series([
 				function (done) {
-					db.run('CREATE TABLE IF NOT EXISTS "participant" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `attendance_id` INTEGER NOT NULL, `full_name` TEXT NOT NULL, `id_photo` BLOB NOT NULL, `rfid_tag` TEXT NOT NULL, `meeting_ids` TEXT )', done);
+					db.run('CREATE TABLE IF NOT EXISTS "participants" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `attendance_id` INTEGER NOT NULL, `full_name` TEXT NOT NULL, `id_photo` BLOB NOT NULL, `rfid_tag` TEXT NOT NULL, `meeting_ids` TEXT )', done);
 				},
 				function (done) {
 					db.run('CREATE TABLE IF NOT EXISTS "meeting_logs" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `rfid_tag` TEXT NOT NULL, `machine_code` TEXT NOT NULL DEFAULT \'' + options.machineCode + '\', `meeting_id` TEXT, `sync` INTEGER DEFAULT 0 )', done);
 				},
 				function (done) {
-					db.run('CREATE INDEX IF NOT EXISTS `tag_index` ON "participant" (`rfid_tag` ASC)', done);
+					db.run('CREATE INDEX IF NOT EXISTS `tag_index` ON "participants" (`rfid_tag` ASC)', done);
 				}
 			], callback);
 		});
@@ -34,7 +34,7 @@ module.exports = {
 		}, callback);
 	},
 	getParticipant: function (tag, callback) {
-		db.get('SELECT full_name, id_photo, meeting_ids FROM participant WHERE rfid_tag = $tag LIMIT 1', {
+		db.get('SELECT full_name, id_photo, meeting_ids FROM participants WHERE rfid_tag = $tag LIMIT 1', {
 			$tag: data
 		}, callback);
 	},
