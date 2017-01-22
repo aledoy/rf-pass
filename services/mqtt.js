@@ -6,10 +6,11 @@ let mqttClient;
 module.exports = {
 	connect: function (options, callback) {
 		mqttClient = mqtt.connect(options.url, {
-			keepalive: 900,
+			keepalive: 300,
 			clientId: options.machineCode,
 			username: options.user,
-			password: options.pass
+			password: options.pass,
+			reconnectPeriod: 1000
 		});
 
 		mqttClient.on('error', function (err) {
@@ -27,6 +28,14 @@ module.exports = {
 			mqttClient.subscribe(options.machineCode);
 
 			console.log(`MQTT Client subscribed to ${options.machineCode}`);
+		});
+
+		mqttClient.on('offline', function() {
+			console.log('MQTT Client went offline.');
+		});
+
+		mqttClient.on('reconnect', function() {
+			console.log('MQTT Client reconnecting to server.');
 		});
 
 		callback();
