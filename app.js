@@ -53,14 +53,14 @@ async.parallel({
 			mqtt.getClient(done);
 		});
 	},
-	/*device: function (done) {
+	device: function (done) {
 		// Connect to Serial RFID Device
 		let rfIdReader = require('./services/rfid-reader');
 
 		rfIdReader.connect(function (err) {
 			done(err, rfIdReader);
 		});
-	},*/
+	},
 	server: function (done) {
 		// Put up the server and serve the static HTML page
 		done(null, require('./services/server'));
@@ -114,7 +114,7 @@ async.parallel({
 	});
 
 	// Listen for RFID Tags read by the RFID Reader
-	/*result.device.on('data', function (data) {
+	result.device.on('data', function (data) {
 		if (!`${data}`.length === 24) return;
 
 		// Check if the tag is on the cache. If it is, don't execute the logic. Tags expire from the cache every 5 secs.
@@ -205,8 +205,7 @@ async.parallel({
 		});
 	});
 
-	// Reconnect to RFID Reader when disconnected
-	result.device.on('disconnect', function () {
+	let reconnectDevice = function () {
 		console.log('RFID Reader disconnected. Trying to reconnect...');
 
 		let int = setInterval(function () {
@@ -216,7 +215,17 @@ async.parallel({
 				}, 3000);
 			});
 		}, 6000);
-	});*/
+	};
+
+	// Reconnect to RFID Reader when disconnected
+	result.device.on('disconnect', reconnectDevice);
+
+	process.nextTick(function () {
+		setTimeout(function () {
+			if (result.device.status === 'disconnected')
+				reconnectDevice();
+		}, 10000);
+	});
 
 	// Sync all meeting logs to the cloud database every 15 minutes
 	setInterval(function () {
