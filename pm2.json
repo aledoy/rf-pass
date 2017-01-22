@@ -1,0 +1,13 @@
+{
+  "apps": [
+	{
+	  "name": "rfid-pass",
+	  "cwd": "/home/pi/rfid-pass",
+	  "script": "app.js",
+	  "exec_mode": "cluster",
+	  "instances": 0,
+	  "max_memory_restart": "1G",
+	  "kill_timeout": 20000
+	}
+  ]
+}
