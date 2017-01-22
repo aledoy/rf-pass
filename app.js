@@ -206,9 +206,9 @@ async.parallel({
 	});
 
 	let reconnectDevice = function () {
-		console.log('RFID Reader disconnected. Trying to reconnect...');
-
 		let int = setInterval(function () {
+			console.log('RFID Reader disconnected. Trying to reconnect...');
+
 			result.device.connect(function () {
 				setTimeout(function () {
 					if (result.device.status === 'connected') clearInterval(int);
