@@ -1,8 +1,7 @@
 'use strict';
 
-require('dotenv').config()
+require('dotenv').config();
 
-let map = require('lodash.map');
 let path = require('path');
 let async = require('async');
 let includes = require('lodash.includes');
@@ -29,12 +28,14 @@ async.parallel({
 		let db = require('./services/cloud-db');
 
 		db.connect({
-			host: process.env.CLOUD_DB_HOST,
+			server: process.env.CLOUD_DB_HOST,
 			port: process.env.CLOUD_DB_PORT,
 			user: process.env.CLOUD_DB_USER,
 			password: process.env.CLOUD_DB_PASS,
 			database: process.env.CLOUD_DB_DATABASE,
-			acquireTimeout: 15000
+			options: {
+				encrypt: true
+			}
 		}, function () {
 			console.log('Connected to Cloud Database');
 			done(null, db);
@@ -224,7 +225,7 @@ async.parallel({
 		setTimeout(function () {
 			if (result.device.status === 'disconnected')
 				reconnectDevice();
-		}, 10000);
+		}, 5000);
 	});
 
 	// Sync all meeting logs to the cloud database every 15 minutes
@@ -235,12 +236,8 @@ async.parallel({
 			let ids = [];
 
 			async.each(logs, function (log, done) {
-				let logId = log.id;
-
-				delete log.id;
-
 				result.cloudDb.syncLog(log, function (err) {
-					if (!err) ids.push(logId);
+					if (!err) ids.push(log.id);
 					done();
 				});
 			}, function () {
