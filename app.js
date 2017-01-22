@@ -101,14 +101,16 @@ async.parallel({
 			}
 
 			// If type is participantinfo, add the participant to the local database
-			else if (message.type === 'participantinfo') {
+			else if (message.type === 'participantinfo' && !isEmpty(message.attendance_id)) {
 				message.meeting_ids = (!isEmpty(message.meeting_ids)) ? message.meeting_ids.join(',') : null;
 
-				result.localDb.addParticipant(message, function (err) {
-					if (err) {
-						console.error('Error adding participant', err);
-						console.error('Participant Info', message);
-					}
+				result.localDb.deleteParticipantByAttendanceId(message.attendance_id, function () {
+					result.localDb.addParticipant(message, function (err) {
+						if (err) {
+							console.error('Error adding participant', err);
+							console.error('Participant Info', message);
+						}
+					});
 				});
 			}
 		});
