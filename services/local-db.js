@@ -20,12 +20,21 @@ module.exports = {
 				},
 				function (done) {
 					db.run('CREATE INDEX IF NOT EXISTS `tag_index` ON "participants" (`rfid_tag` ASC)', done);
+				},
+				function (done) {
+					db.run('CREATE INDEX IF NOT EXISTS `attendance_id_index` ON "participants" (`attendance_id` ASC)', done);
+				},
+				function (done) {
+					db.run('CREATE INDEX IF NOT EXISTS `sync_index` ON "meeting_logs" (`sync` ASC)', done);
+				},
+				function (done) {
+					db.run('CREATE INDEX IF NOT EXISTS `date_index` ON "meeting_logs" (`date` ASC)', done);
 				}
 			], callback);
 		});
 	},
 	addParticipant: function (participant, callback) {
-		db.run('INSERT INTO participant (`attendance_id`, `full_name`, `id_photo`, `rfid_tag`, `meeting_ids`) VALUES ($attendance_id, $full_name, $id_photo, $rfid_tag, $meeting_ids)', {
+		db.run('INSERT INTO participants (`attendance_id`, `full_name`, `id_photo`, `rfid_tag`, `meeting_ids`) VALUES ($attendance_id, $full_name, $id_photo, $rfid_tag, $meeting_ids)', {
 			$attendance_id: participant.attendance_id,
 			$full_name: participant.full_name,
 			$id_photo: participant.id_photo,
@@ -38,6 +47,11 @@ module.exports = {
 			$tag: data
 		}, callback);
 	},
+	deleteParticipantByAttendanceId: function (attendanceId, callback) {
+		db.run('DELETE FROM participants WHERE attendance_id = $attendanceId', {
+			$attendanceId: attendanceId
+		}, callback);
+	},
 	log: function (tag, meetingId, callback) {
 		db.run('INSERT INTO meeting_logs (`rfid_tag`, `meeting_id`) VALUES ($tag, $meetingId)', {
 			$tag: data,
@@ -45,7 +59,7 @@ module.exports = {
 		}, callback);
 	},
 	getUnsyncedLogs: function(callback) {
-		db.all('SELECT id, date, rfid_tag, machine_code, meeting_id FROM meeting_logs WHERE sync = 0', callback);
+		db.all('SELECT id, date, rfid_tag, machine_code, meeting_id FROM meeting_logs WHERE sync = 0 ORDER BY date', callback);
 	},
 	updateSyncedLogs: function (logIds, callback) {
 		db.run(`UPDATE meeting_logs SET sync = 1 WHERE id IN (${logIds})`, callback);
