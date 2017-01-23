@@ -1,7 +1,7 @@
 'use strict';
 
-const NodeCache = require('node-cache');
-const myCache = new NodeCache({
+let NodeCache = require('node-cache');
+let myCache = new NodeCache({
 	stdTTL: 5,
 	checkperiod: 5
 });

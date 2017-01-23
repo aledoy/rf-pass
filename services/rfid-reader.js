@@ -33,20 +33,9 @@ RFIDReader.prototype.connect = function (callback) {
 				autoOpen: false
 			});
 
-			let errorListener = function (err) {
-				console.error('Error on Serial Port.');
-				console.error(err);
-
-				setTimeout(function () {
-					process.exit(1);
-				}, 3000);
-			};
-
-			let dataListener = function () {
+			let dataListener = function (data) {
 				self.emit('data', data);
 			};
-
-			serialPort.on('error', errorListener);
 
 			serialPort.on('data', dataListener);
 
@@ -54,7 +43,6 @@ RFIDReader.prototype.connect = function (callback) {
 				console.log(`${port.comName} port has been closed/disconnected.`);
 
 				self.status = 'disconnected';
-				serialPort.removeListener('error', errorListener);
 				serialPort.removeListener('data', dataListener);
 				self.emit('disconnect');
 			});
@@ -64,9 +52,7 @@ RFIDReader.prototype.connect = function (callback) {
 					console.error(`Error opening serial port ${port.comName}`);
 					console.error(err);
 
-					return setTimeout(function () {
-						process.exit(1);
-					}, 3000);
+					throw err;
 				}
 
 				self.status = 'connected';

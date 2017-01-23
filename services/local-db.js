@@ -44,7 +44,7 @@ module.exports = {
 	},
 	getParticipant: function (tag, callback) {
 		db.get('SELECT full_name, id_photo, meeting_ids FROM participants WHERE rfid_tag = $tag LIMIT 1', {
-			$tag: data
+			$tag: tag
 		}, callback);
 	},
 	deleteParticipantByAttendanceId: function (attendanceId, callback) {
@@ -54,7 +54,7 @@ module.exports = {
 	},
 	log: function (tag, meetingId, callback) {
 		db.run('INSERT INTO meeting_logs (`rfid_tag`, `meeting_id`) VALUES ($tag, $meetingId)', {
-			$tag: data,
+			$tag: tag,
 			$meetingId: meetingId
 		}, callback);
 	},

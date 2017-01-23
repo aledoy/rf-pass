@@ -10,24 +10,6 @@ let app = express();
 let server = http.createServer(app);
 let io = require('socket.io')(server);
 
-io.on('error', function (err) {
-	console.error('Error on Websocket Server.');
-	console.error(err);
-
-	setTimeout(function () {
-		process.exit(1);
-	}, 3000);
-});
-
-server.on('error', function (err) {
-	console.error('Error on HTTP Server.');
-	console.error(err);
-
-	setTimeout(function () {
-		process.exit(1);
-	}, 3000);
-});
-
 io.on('connection', function (client) {
 	console.log('Received new client connection', client.id);
 });
