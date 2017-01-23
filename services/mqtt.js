@@ -13,15 +13,6 @@ module.exports = {
 			reconnectPeriod: 1000
 		});
 
-		mqttClient.on('error', function (err) {
-			console.error('Error on MQTT Client');
-			console.error(err);
-
-			return setTimeout(function () {
-				process.exit(1);
-			}, 3000);
-		});
-
 		mqttClient.on('connect', function () {
 			console.log('MQTT Client connected to server.');
 

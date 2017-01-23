@@ -6,8 +6,15 @@ let path = require('path');
 let async = require('async');
 let includes = require('lodash.includes');
 let isEmpty = require('lodash.isempty');
+let Raven = require('raven');
 
 let currentMeeting = null;
+
+Raven.config(process.env.SENTRY_URL, {
+	captureUnhandledRejections: true
+}).install(function () {
+	process.exit(1);
+});
 
 async.parallel({
 	localDb: function (done) {
@@ -71,16 +78,20 @@ async.parallel({
 		done(null, require('./services/cache'));
 	}
 }, function (err, result) {
-	if (err) {
-		console.error(err);
-		return process.exit(1);
-	}
+	if (err) throw err;
 
 	// Get the current meeting for the device
 	result.cloudDb.getCurrentMeeting(process.env.MACHINE_CODE, function (err, meeting) {
 		if (!err && !isEmpty(meeting)) {
 			currentMeeting = meeting.meeting_id;
 			console.log(`Current meeting is now ${currentMeeting}`);
+		}
+		else if (err) {
+			Raven.captureException(err, {
+				extra: {
+					operation: 'Get Current Meeting'
+				}
+			});
 		}
 	});
 
@@ -107,6 +118,13 @@ async.parallel({
 				result.localDb.deleteParticipantByAttendanceId(message.attendance_id, function () {
 					result.localDb.addParticipant(message, function (err) {
 						if (err) {
+							Raven.captureException(err, {
+								extra: {
+									operation: 'Add Participant to Local DB',
+									participantInfo: message
+								}
+							});
+
 							console.error('Error adding participant', err);
 							console.error('Participant Info', message);
 						}
@@ -118,7 +136,7 @@ async.parallel({
 
 	// Listen for RFID Tags read by the RFID Reader
 	result.device.on('data', function (data) {
-		if (!`${data}`.length === 24) return;
+		if (`${data}`.length !== 24) return;
 
 		// Check if the tag is on the cache. If it is, don't execute the logic. Tags expire from the cache every 5 secs.
 		result.cache.get(data, function (err, cacheResult) {
@@ -163,6 +181,13 @@ async.parallel({
 
 						// If there was an error, show an avatar
 						if (err) {
+							Raven.captureException(err, {
+								extra: {
+									operation: 'Search Participant by Tag',
+									tag: data
+								}
+							});
+
 							console.error(err);
 
 							msg = `<div class="content-bg">
@@ -203,7 +228,14 @@ async.parallel({
 					done();
 				}
 			], function (err) {
-				if (err) console.error(err);
+				if (err) {
+					Raven.captureException(err, {
+						extra: {
+							operation: 'Badge In',
+							tag: data
+						}
+					});
+				}
 			});
 		});
 	});
@@ -239,13 +271,31 @@ async.parallel({
 
 			async.each(logs, function (log, done) {
 				result.cloudDb.syncLog(log, function (err) {
-					if (!err) ids.push(log.id);
+					if (!err)
+						ids.push(log.id);
+					else {
+						Raven.captureException(err, {
+							extra: {
+								operation: 'Sync Log to Cloud DB',
+								log: log
+							}
+						});
+					}
 					done();
 				});
 			}, function () {
 				// Update all meeting logs in the local database that were synced
-				result.localDb.updateSyncedLogs(ids);
-				console.log('Meeting log synced.');
+				result.localDb.updateSyncedLogs(ids, function (err) {
+					if (!err)
+						console.log('Meeting log synced.');
+					else {
+						Raven.captureException(err, {
+							extra: {
+								operation: 'Update Synced Logs on Local DB'
+							}
+						});
+					}
+				});
 			});
 		});
 	}, 900000);
