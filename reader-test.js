@@ -33,24 +33,19 @@ SerialPort.list(function (err, ports) {
 
 			console.log(`${port.comName} port has been opened.`);
 
-			// Flush all inputs
-			rfIdPort.flush(function (err) {
-				if (err) console.error(err);
+			setInterval(function () {
+				rfIdPort.flush(function (err) {
+					if (err) console.error(err);
 
-				console.log(`${port.comName} inputs have been flushed.`);
-				// Write this byte sequence to start reading
-				//rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
-				let writeSequence = function () {
+					console.log(`${port.comName} inputs have been flushed.`);
+
 					rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
 						if (err) console.error(err);
 
 						console.log(`${port.comName} bytes have been written.`);
-						writeSequence();
 					});
-				};
-
-				writeSequence();
-			});
+				});
+			}, 15);
 		});
 	});
 });
