@@ -18,12 +18,6 @@ SerialPort.list(function (err, ports) {
 
 		let dataListener = function (data) {
 			console.log('Data received', data);
-
-			rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
-				if (err) console.error(err);
-
-				console.log(`${port.comName} bytes have been written.`);
-			});
 		};
 
 		rfIdPort.on('data', dataListener);
@@ -46,11 +40,16 @@ SerialPort.list(function (err, ports) {
 				console.log(`${port.comName} inputs have been flushed.`);
 				// Write this byte sequence to start reading
 				//rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
-				rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
-					if (err) console.error(err);
+				let writeSequence = function () {
+					rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
+						if (err) console.error(err);
 
-					console.log(`${port.comName} bytes have been written.`);
-				});
+						console.log(`${port.comName} bytes have been written.`);
+						writeSequence();
+					});
+				};
+
+				writeSequence();
 			});
 		});
 	});
