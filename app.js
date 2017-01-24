@@ -63,7 +63,7 @@ async.parallel({
 	},
 	device: function (done) {
 		// Connect to Serial RFID Device
-		let rfIdReader = require('./services/rfid-reader');
+		let rfIdReader = require('./services/generic-reader');
 
 		rfIdReader.connect(function (err) {
 			done(err, rfIdReader);
@@ -254,15 +254,6 @@ async.parallel({
 
 	// Reconnect to RFID Reader when disconnected
 	result.device.on('disconnect', reconnectDevice);
-
-	result.device.open(function () {
-		process.nextTick(function () {
-			setTimeout(function () {
-				if (result.device.status === 'disconnected')
-					reconnectDevice();
-			}, 5000);
-		});
-	});
 
 	// Sync all meeting logs to the cloud database every 15 minutes
 	setInterval(function () {
