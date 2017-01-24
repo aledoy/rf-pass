@@ -2,7 +2,7 @@
 
 let async = require('async');
 let SerialPort = require('serialport');
-// let parser = require('./parser').serial();
+let parser = require('./parser').serial();
 let EventEmitter = require('events').EventEmitter;
 
 function RFIDReader() {
@@ -27,29 +27,13 @@ RFIDReader.prototype.connect = function (callback) {
 
 			console.log(port);
 
-			let rfIdPort = new SerialPort(port.comName, {
-				//baudRate: 57600,
-				// parser: parser,
-				baudRate: 9600,
+			self.comName = port.comName;
+			self.port = new SerialPort(port.comName, {
+				baudRate: 57600,
+				parser: parser,
+				//baudRate: 9600,
 				autoOpen: false
 			});
-
-			let dataListener = function (data) {
-				// self.emit('data', data);
-				console.log('Data received', data);
-			};
-
-			rfIdPort.on('data', dataListener);
-
-			rfIdPort.once('disconnect', function () {
-				console.log(`${port.comName} port has been closed/disconnected.`);
-
-				self.status = 'disconnected';
-				rfIdPort.removeListener('data', dataListener);
-				self.emit('disconnect');
-			});
-
-			self.port = rfIdPort;
 
 			done();
 		}, callback);
@@ -67,11 +51,34 @@ RFIDReader.prototype.open = function (callback) {
 
 		console.log(`${self.port.comName} port has been opened.`);
 
+		let dataListener = function (data) {
+			// self.emit('data', data);
+			console.log('Data received', data);
+		};
+
+		self.port.on('data', dataListener);
+
+		self.port.once('disconnect', function () {
+			console.log(`${self.comName} port has been closed/disconnected.`);
+
+			self.status = 'disconnected';
+			self.port.removeListener('data', dataListener);
+			self.emit('disconnect');
+		});
+
 		// Flush all inputs
 		self.port.flush(function () {
 			// Write this byte sequence to start reading
-			// rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
-			self.port.write(new Buffer([0x40, 0x06, 0xEE, 0x01, 0x00, 0x00, 0x00, 0xCB]), callback);
+			self.port.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), callback);
+
+			/* async.series([
+				function (done) {
+					self.port.write(new Buffer([0x40, 0x03, 0x0A, 0x01, 0x23]), done); // Set Antenna
+				},
+				function (done) {
+					self.port.write(new Buffer([0x40, 0x06, 0xEE, 0x01, 0x00, 0x00, 0x00, 0xCB]), done); // List Tags
+				}
+			], callback); */
 		});
 	});
 };
