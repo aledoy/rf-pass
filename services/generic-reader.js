@@ -16,6 +16,7 @@ function RFIDReader() {
 require('util').inherits(RFIDReader, EventEmitter);
 
 RFIDReader.prototype.connect = function (callback) {
+	let int;
 	let self = this;
 	self.status = 'disconnected';
 
@@ -44,6 +45,8 @@ RFIDReader.prototype.connect = function (callback) {
 
 				self.status = 'disconnected';
 				readerPort.removeListener('data', dataListener);
+				clearInterval(int);
+				readerPort = null;
 				self.emit('disconnect');
 			});
 
@@ -59,10 +62,12 @@ RFIDReader.prototype.connect = function (callback) {
 
 					console.log(`${port.comName} inputs have been flushed.`);
 
-					setInterval(function () {
-						readerPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
-							if (err) console.error(err);
-						});
+					int = setInterval(function () {
+						if (readerPort.isOpen()) {
+							readerPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
+								if (err) console.error(err);
+							});
+						}
 					}, 50);
 				});
 			});
