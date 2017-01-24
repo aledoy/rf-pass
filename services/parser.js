@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	serial: function () {
+	generic: function () {
 		let data = '';
 		let start = false;
 
