@@ -16,7 +16,6 @@ SerialPort.list(function (err, ports) {
 			autoOpen: false
 		});
 
-
 		let dataListener = function (data) {
 			// self.emit('data', data);
 			console.log('Data received', data);
@@ -25,16 +24,27 @@ SerialPort.list(function (err, ports) {
 		rfIdPort.on('data', dataListener);
 
 		rfIdPort.once('disconnect', function () {
-			console.log(`${port.comName} port has been closed/disconnected.`);
+			console.log(`${rfIdPort.comName} port has been closed/disconnected.`);
 
 			rfIdPort.removeListener('data', dataListener);
 		});
 
 		rfIdPort.open(function (err) {
+			if (err) console.error(err);
+
+			console.log(`${rfIdPort.comName} port has been opened.`);
+
 			// Flush all inputs
-			rfIdPort.flush(function () {
+			rfIdPort.flush(function (err) {
+				if (err) console.error(err);
+
+				console.log(`${rfIdPort.comName} inputs have been flushed.`);
 				// Write this byte sequence to start reading
-				rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
+				rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
+					if (err) console.error(err);
+
+					console.log(`${rfIdPort.comName} bytes have been written.`);
+				});
 			});
 		});
 	});
