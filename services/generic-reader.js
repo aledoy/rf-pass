@@ -2,7 +2,7 @@
 
 let async = require('async');
 let SerialPort = require('serialport');
-let parser = require('./parser').serial();
+let parser = require('./parser').generic();
 let EventEmitter = require('events').EventEmitter;
 
 function RFIDReader() {
@@ -27,7 +27,7 @@ RFIDReader.prototype.connect = function (callback) {
 
 			console.log(port);
 
-			let rfIdPort = new SerialPort(port.comName, {
+			let readerPort = new SerialPort(port.comName, {
 				baudRate: 57600,
 				parser: parser,
 				autoOpen: false
@@ -37,30 +37,30 @@ RFIDReader.prototype.connect = function (callback) {
 				self.emit('data', data);
 			};
 
-			rfIdPort.on('data', dataListener);
+			readerPort.on('data', dataListener);
 
-			rfIdPort.once('disconnect', function () {
+			readerPort.once('disconnect', function () {
 				console.log(`${port.comName} port has been closed/disconnected.`);
 
 				self.status = 'disconnected';
-				rfIdPort.removeListener('data', dataListener);
+				readerPort.removeListener('data', dataListener);
 				self.emit('disconnect');
 			});
 
-			rfIdPort.open(function (err) {
+			readerPort.open(function (err) {
 				if (err) console.error(err);
 
 				self.status = 'connected';
 
 				console.log(`${port.comName} port has been opened.`);
 
-				rfIdPort.flush(function (err) {
+				readerPort.flush(function (err) {
 					if (err) console.error(err);
 
 					console.log(`${port.comName} inputs have been flushed.`);
 
 					setInterval(function () {
-						rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
+						readerPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]), function (err) {
 							if (err) console.error(err);
 						});
 					}, 50);
