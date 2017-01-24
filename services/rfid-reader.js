@@ -2,7 +2,7 @@
 
 let async = require('async');
 let SerialPort = require('serialport');
-let parser = require('./parser').serial();
+// let parser = require('./parser').serial();
 let EventEmitter = require('events').EventEmitter;
 
 function RFIDReader() {
@@ -27,47 +27,52 @@ RFIDReader.prototype.connect = function (callback) {
 
 			console.log(port);
 
-			let serialPort = new SerialPort(port.comName, {
-				baudRate: 57600,
-				parser: parser,
+			let rfIdPort = new SerialPort(port.comName, {
+				//baudRate: 57600,
+				// parser: parser,
+				baudRate: 9600,
 				autoOpen: false
 			});
 
 			let dataListener = function (data) {
-				self.emit('data', data);
+				// self.emit('data', data);
+				console.log('Data received', data);
 			};
 
-			serialPort.on('data', dataListener);
+			rfIdPort.on('data', dataListener);
 
-			serialPort.once('disconnect', function () {
+			rfIdPort.once('disconnect', function () {
 				console.log(`${port.comName} port has been closed/disconnected.`);
 
 				self.status = 'disconnected';
-				serialPort.removeListener('data', dataListener);
+				rfIdPort.removeListener('data', dataListener);
 				self.emit('disconnect');
 			});
 
-			serialPort.open(function (err) {
-				if (err) {
-					console.error(`Error opening serial port ${port.comName}`);
-					console.error(err);
-
-					throw err;
-				}
-
-				self.status = 'connected';
-
-				console.log(`${port.comName} port has been opened.`);
-
-				// Flush all inputs
-				serialPort.flush(function () {
-					// Write this byte sequence to start reading
-					serialPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
-				});
-			});
+			self.port = rfIdPort;
 
 			done();
 		}, callback);
+	});
+};
+
+RFIDReader.prototype.open = function (callback) {
+	let self = this;
+	self.status = 'disconnected';
+
+	self.port.open(function (err) {
+		if (err) throw err;
+
+		self.status = 'connected';
+
+		console.log(`${self.port.comName} port has been opened.`);
+
+		// Flush all inputs
+		self.port.flush(function () {
+			// Write this byte sequence to start reading
+			// rfIdPort.write(new Buffer([0x04, 0x00, 0x01, 0xDB, 0x4B]));
+			self.port.write(new Buffer([0x40, 0x06, 0xEE, 0x01, 0x00, 0x00, 0x00, 0xCB]), callback);
+		});
 	});
 };
 

@@ -255,11 +255,13 @@ async.parallel({
 	// Reconnect to RFID Reader when disconnected
 	result.device.on('disconnect', reconnectDevice);
 
-	process.nextTick(function () {
-		setTimeout(function () {
-			if (result.device.status === 'disconnected')
-				reconnectDevice();
-		}, 5000);
+	result.device.open(function () {
+		process.nextTick(function () {
+			setTimeout(function () {
+				if (result.device.status === 'disconnected')
+					reconnectDevice();
+			}, 5000);
+		});
 	});
 
 	// Sync all meeting logs to the cloud database every 15 minutes
