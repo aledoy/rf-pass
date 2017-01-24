@@ -42,14 +42,13 @@ RFIDReader.prototype.connect = function (callback) {
 
 RFIDReader.prototype.open = function (callback) {
 	let self = this;
-	self.status = 'disconnected';
 
 	self.port.open(function (err) {
 		if (err) throw err;
 
 		self.status = 'connected';
 
-		console.log(`${self.port.comName} port has been opened.`);
+		console.log(`${self.comName} port has been opened.`);
 
 		let dataListener = function (data) {
 			// self.emit('data', data);
