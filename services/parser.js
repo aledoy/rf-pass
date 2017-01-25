@@ -31,5 +31,15 @@ module.exports = {
 				start = false;
 			}
 		};
+	},
+	elid: function () {
+		return function (emitter, buffer) {
+			if (!buffer) return;
+
+			let data = buffer.toString('hex');
+
+			if (data.startsWith('f010ee0106'))
+				emitter.emit('data', data);
+		};
 	}
 };
