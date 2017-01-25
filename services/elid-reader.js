@@ -2,7 +2,7 @@
 
 let async = require('async');
 let SerialPort = require('serialport');
-//let parser = require('./parser').generic();
+let parser = require('./parser').elid();
 let EventEmitter = require('events').EventEmitter;
 
 function RFIDReader() {
@@ -29,8 +29,8 @@ RFIDReader.prototype.connect = function (callback) {
 			console.log(port);
 
 			let readerPort = new SerialPort(port.comName, {
-				baudRate: 9600,
-				//parser: parser,
+				baudRate: 115200,
+				parser: parser,
 				autoOpen: false
 			});
 
