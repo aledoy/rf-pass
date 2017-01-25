@@ -2,6 +2,7 @@
 
 let async = require('async');
 let SerialPort = require('serialport');
+//let parser = require('./parser').generic();
 let EventEmitter = require('events').EventEmitter;
 
 function RFIDReader() {
@@ -15,6 +16,7 @@ function RFIDReader() {
 require('util').inherits(RFIDReader, EventEmitter);
 
 RFIDReader.prototype.connect = function (callback) {
+	let int;
 	let self = this;
 	self.status = 'disconnected';
 
@@ -26,37 +28,47 @@ RFIDReader.prototype.connect = function (callback) {
 
 			console.log(port);
 
-			let rfIdPort = new SerialPort(port.comName, {
+			let readerPort = new SerialPort(port.comName, {
 				baudRate: 9600,
+				//parser: parser,
 				autoOpen: false
 			});
 
 			let dataListener = function (data) {
-				// self.emit('data', data);
-				console.log(data);
+				self.emit('data', data);
 			};
 
-			rfIdPort.on('data', dataListener);
+			readerPort.on('data', dataListener);
 
-			rfIdPort.once('disconnect', function () {
+			readerPort.once('disconnect', function () {
 				console.log(`${port.comName} port has been closed/disconnected.`);
 
 				self.status = 'disconnected';
-				rfIdPort.removeListener('data', dataListener);
+				readerPort.removeListener('data', dataListener);
+				clearInterval(int);
+				readerPort = null;
 				self.emit('disconnect');
 			});
 
-			rfIdPort.open(function (err) {
-				if (err) throw err;
+			readerPort.open(function (err) {
+				if (err) console.error(err);
 
 				self.status = 'connected';
 
 				console.log(`${port.comName} port has been opened.`);
 
-				// Flush all inputs
-				rfIdPort.flush(function () {
-					// Write this byte sequence to start reading
-					rfIdPort.write(new Buffer([0x40, 0x06, 0xEE, 0x01, 0x00, 0x00, 0x00, 0xCB]));
+				readerPort.flush(function (err) {
+					if (err) console.error(err);
+
+					console.log(`${port.comName} inputs have been flushed.`);
+
+					int = setInterval(function () {
+						if (readerPort.isOpen()) {
+							readerPort.write(new Buffer([0x40, 0x06, 0xEE, 0x00, 0x00, 0x00, 0x00, 0xCC]), function (err) {
+								if (err) console.error(err);
+							});
+						}
+					}, 50);
 				});
 			});
 
