@@ -39,7 +39,7 @@ module.exports = {
 			let data = buffer.toString('hex');
 
 			if (data.startsWith('f010ee0106')) {
-				data = data.substring(10, 12);
+				data = data.substring(10, 34);
 				data = data.toUpperCase();
 				emitter.emit('data', data);
 			}
