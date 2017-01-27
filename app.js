@@ -64,7 +64,7 @@ async.parallel({
 	device: function (done) {
 		// Connect to Serial RFID Device
 		//let rfIdReader = require('./services/generic-reader');
-		let rfIdReader = require('./services/elid-reader');
+		let rfIdReader = require(`./services/${('' +process.env.READER).toLowerCase() || 'generic'}-reader`);
 
 		rfIdReader.connect(function (err) {
 			done(err, rfIdReader);
