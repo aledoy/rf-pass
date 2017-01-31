@@ -52,8 +52,9 @@ module.exports = {
 			$attendanceId: attendanceId
 		}, callback);
 	},
-	log: function (tag, meetingId, callback) {
-		db.run('INSERT INTO meeting_logs (`rfid_tag`, `meeting_id`) VALUES ($tag, $meetingId)', {
+	log: function (machineCode, tag, meetingId, callback) {
+		db.run('INSERT INTO meeting_logs (`machine_code`, `rfid_tag`, `meeting_id`) VALUES ($machineCode, $tag, $meetingId)', {
+			$machineCode: machineCode
 			$tag: tag,
 			$meetingId: meetingId
 		}, callback);
