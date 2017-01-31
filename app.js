@@ -146,7 +146,7 @@ async.parallel({
 			async.parallel([
 				function (done) {
 					// Log the badge in
-					result.localDb.log(data, currentMeeting, done);
+					result.localDb.log(process.env.MACHINE_CODE, data, currentMeeting, done);
 				},
 				function (done) {
 					// Put the tag on the cache
