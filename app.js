@@ -279,6 +279,8 @@ async.parallel({
 				});
 			}, function () {
 				// Update all meeting logs in the local database that were synced
+				ids = ids.join(',');
+				
 				result.localDb.updateSyncedLogs(ids, function (err) {
 					if (!err)
 						console.log('Meeting log synced.');
