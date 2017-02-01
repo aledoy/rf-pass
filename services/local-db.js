@@ -54,7 +54,7 @@ module.exports = {
 	},
 	log: function (machineCode, tag, meetingId, callback) {
 		db.run('INSERT INTO meeting_logs (`machine_code`, `rfid_tag`, `meeting_id`) VALUES ($machineCode, $tag, $meetingId)', {
-			$machineCode: machineCode
+			$machineCode: machineCode,
 			$tag: tag,
 			$meetingId: meetingId
 		}, callback);
