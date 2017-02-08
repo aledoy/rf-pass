@@ -153,7 +153,7 @@ async.parallel({
 			async.parallel([
 				function (done) {
 					// Log the badge in
-					result.localDb.log(data, currentMeeting, done);
+					result.localDb.log(process.env.MACHINE_CODE, data, currentMeeting, done);
 				},
 				function (done) {
 					// Put the tag on the cache
@@ -286,6 +286,8 @@ async.parallel({
 				});
 			}, function () {
 				// Update all meeting logs in the local database that were synced
+				ids = ids.join(',');
+				
 				result.localDb.updateSyncedLogs(ids, function (err) {
 					if (!err)
 						console.log('Meeting log synced.');
