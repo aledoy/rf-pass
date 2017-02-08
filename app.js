@@ -145,7 +145,7 @@ async.parallel({
 										console.error('Error adding participant', err);
 									}
 									else
-										console.log(`Added/replaced participant in local database.`, parsedMessage);
+										console.log(`Added/replaced participant in local database.`);
 								});
 							}
 						});
