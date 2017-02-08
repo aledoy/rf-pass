@@ -109,14 +109,20 @@ async.parallel({
 			// If type is meetinginfo, set the current meeting
 			if (message.type === 'meetinginfo') {
 				currentMeeting = `${message.$meeting_id}`;
-				console.log(`Current meeting is now ${currentMeeting}`);
+				console.log(`Received New Meeting Configuration. Current meeting is now ${currentMeeting}`);
 			}
 
 			// If type is participantinfo, add the participant to the local database
 			else if (message.type === 'participantinfo' && !isEmpty(message.attendance_id)) {
+				console.log('Received New Participant Info', message);
+
 				message.meeting_ids = (!isEmpty(message.meeting_ids)) ? message.meeting_ids : null;
 
-				result.localDb.deleteParticipantByAttendanceId(message.attendance_id, function () {
+				result.localDb.deleteParticipantByAttendanceId(message.attendance_id, function (err) {
+					if (err) console.error(err);
+
+					console.log(`Deleted participant with Attendance ID: ${message.attendance_id}`);
+
 					result.localDb.addParticipant(message, function (err) {
 						if (err) {
 							Raven.captureException(err, {
@@ -127,8 +133,9 @@ async.parallel({
 							});
 
 							console.error('Error adding participant', err);
-							console.error('Participant Info', message);
 						}
+						else
+							console.log(`Added/replaced participant in local database.`);
 					});
 				});
 			}
