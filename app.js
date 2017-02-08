@@ -128,7 +128,10 @@ async.parallel({
 					if (!isEmpty(parsedMessage.id_photo) && validUrl.isUri(parsedMessage.id_photo)) {
 						request.get(parsedMessage.id_photo, (err, response, body) => {
 							if (response.statusCode === 200) {
-								parsedMessage.id_photo = new Buffer(body).toString('base64');
+								let contents = new Buffer(body);
+								contents = contents.toString('base64');
+
+								parsedMessage.id_photo = contents;
 
 								result.localDb.addParticipant(parsedMessage, function (err) {
 									if (err) {
@@ -142,7 +145,7 @@ async.parallel({
 										console.error('Error adding participant', err);
 									}
 									else
-										console.log(`Added/replaced participant in local database.`, parsedMessage);
+										console.log(`Added/replaced participant in local database.`);
 								});
 							}
 						});
