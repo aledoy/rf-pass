@@ -22,7 +22,7 @@ module.exports = {
 	getParticipant: function (tag, callback) {
 		new sql.Request()
 			.input('rfid_tag', sql.NVarChar, tag)
-			.query('SELECT TOP 1 full_name, id_photo, meeting_ids FROM participants WHERE rfid_tag = @rfid_tag ORDER BY date DESC', function (err, results) {
+			.query('SELECT TOP 1 * FROM participants WHERE rfid_tag = @rfid_tag ORDER BY date DESC', function (err, results) {
 				if (err)
 					callback(err);
 				else if (isEmpty(results))
