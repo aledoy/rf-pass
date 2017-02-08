@@ -4,6 +4,7 @@ require('dotenv').config();
 
 let path = require('path');
 let async = require('async');
+let request = require('request');
 let includes = require('lodash.includes');
 let isEmpty = require('lodash.isempty');
 let Raven = require('raven');
@@ -15,6 +16,17 @@ Raven.config(process.env.SENTRY_URL, {
 }).install(function () {
 	process.exit(1);
 });
+
+let isURL = function (str) {
+	let pattern = new RegExp('^(https?:\/\/)?' + // protocol
+		'((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|' + // domain name
+		'((\d{1,3}\.){3}\d{1,3}))' + // OR ip (v4) address
+		'(\:\d+)?(\/[-a-z\d%_.~+]*)*' + // port and path
+		'(\?[;&a-z\d%_.~+=-]*)?' + // query string
+		'(\#[-a-z\d_]*)?$', 'i'); // fragment locater
+
+	return pattern.test(str);
+};
 
 async.parallel({
 	localDb: function (done) {
@@ -64,7 +76,7 @@ async.parallel({
 	device: function (done) {
 		// Connect to Serial RFID Device
 		//let rfIdReader = require('./services/generic-reader');
-		let rfIdReader = require(`./services/${('' +process.env.READER).toLowerCase() || 'generic'}-reader`);
+		let rfIdReader = require(`./services/${('' + process.env.READER).toLowerCase() || 'generic'}-reader`);
 
 		rfIdReader.connect(function (err) {
 			done(err, rfIdReader);
@@ -98,17 +110,10 @@ async.parallel({
 
 	// Listen for messages from the MQTT Broker
 	result.mqttClient.on('message', function (topic, message) {
-		console.log('Received Message. RAW', message);
-		console.log('Received Message. String', message.toString());
-
 		async.waterfall([
 			async.constant(message.toString()),
 			async.asyncify(JSON.parse)
 		], function (err, parsedMessage) {
-			if (err) console.error(err);
-
-			console.log('Parsed Message', parsedMessage);
-
 			if (err || isEmpty(parsedMessage)) return;
 
 			// If type is meetinginfo, set the current meeting
@@ -128,20 +133,28 @@ async.parallel({
 
 					console.log(`Deleted participant with Attendance ID: ${parsedMessage.attendance_id}`);
 
-					result.localDb.addParticipant(parsedMessage, function (err) {
-						if (err) {
-							Raven.captureException(err, {
-								extra: {
-									operation: 'Add Participant to Local DB',
-									participantInfo: parsedMessage
-								}
-							});
+					if (!isEmpty(parsedMessage.id_photo) && isURL(parsedMessage.id_photo)) {
+						request.get(parsedMessage.id_photo, (err, response, body) => {
+							if (response.statusCode === 200) {
+								parsedMessage.id_photo = new Buffer(body).toString('base64');
 
-							console.error('Error adding participant', err);
-						}
-						else
-							console.log(`Added/replaced participant in local database.`);
-					});
+								result.localDb.addParticipant(parsedMessage, function (err) {
+									if (err) {
+										Raven.captureException(err, {
+											extra: {
+												operation: 'Add Participant to Local DB',
+												participantInfo: parsedMessage
+											}
+										});
+
+										console.error('Error adding participant', err);
+									}
+									else
+										console.log(`Added/replaced participant in local database.`, parsedMessage);
+								});
+							}
+						});
+					}
 				});
 			}
 		});
@@ -292,7 +305,7 @@ async.parallel({
 			}, function () {
 				// Update all meeting logs in the local database that were synced
 				ids = ids.join(',');
-				
+
 				result.localDb.updateSyncedLogs(ids, function (err) {
 					if (!err)
 						console.log('Meeting log synced.');
