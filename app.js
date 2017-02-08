@@ -104,32 +104,36 @@ async.parallel({
 		async.waterfall([
 			async.constant(message.toString()),
 			async.asyncify(JSON.parse)
-		], function (err, message) {
-			if (err || isEmpty(message)) return;
+		], function (err, parsedMessage) {
+			if (err) console.error(err);
+
+			console.log('Parsed Message', parsedMessage);
+
+			if (err || isEmpty(parsedMessage)) return;
 
 			// If type is meetinginfo, set the current meeting
-			if (message.type === 'meetinginfo') {
-				currentMeeting = `${message.$meeting_id}`;
+			if (parsedMessage.type === 'meetinginfo') {
+				currentMeeting = `${parsedMessage.$meeting_id}`;
 				console.log(`Received New Meeting Configuration. Current meeting is now ${currentMeeting}`);
 			}
 
 			// If type is participantinfo, add the participant to the local database
-			else if (message.type === 'participantinfo' && !isEmpty(message.attendance_id)) {
-				console.log('Received New Participant Info', message);
+			else if (parsedMessage.type === 'participantinfo' && parsedMessage.attendance_id) {
+				console.log('Received New Participant Info', parsedMessage);
 
-				message.meeting_ids = (!isEmpty(message.meeting_ids)) ? message.meeting_ids : null;
+				parsedMessage.meeting_ids = (!isEmpty(parsedMessage.meeting_ids)) ? parsedMessage.meeting_ids : null;
 
-				result.localDb.deleteParticipantByAttendanceId(message.attendance_id, function (err) {
+				result.localDb.deleteParticipantByAttendanceId(parsedMessage.attendance_id, function (err) {
 					if (err) console.error(err);
 
-					console.log(`Deleted participant with Attendance ID: ${message.attendance_id}`);
+					console.log(`Deleted participant with Attendance ID: ${parsedMessage.attendance_id}`);
 
-					result.localDb.addParticipant(message, function (err) {
+					result.localDb.addParticipant(parsedMessage, function (err) {
 						if (err) {
 							Raven.captureException(err, {
 								extra: {
 									operation: 'Add Participant to Local DB',
-									participantInfo: message
+									participantInfo: parsedMessage
 								}
 							});
 
