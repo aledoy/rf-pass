@@ -98,7 +98,8 @@ async.parallel({
 
 	// Listen for messages from the MQTT Broker
 	result.mqttClient.on('message', function (topic, message) {
-		console.log('Received Message');
+		console.log('Received Message. RAW', message);
+		console.log('Received Message. String', message.toString());
 
 		async.waterfall([
 			async.constant(message.toString()),
