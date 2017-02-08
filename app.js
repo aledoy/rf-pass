@@ -110,6 +110,8 @@ async.parallel({
 
 	// Listen for messages from the MQTT Broker
 	result.mqttClient.on('message', function (topic, message) {
+		console.log('Received New Message', message.toString());
+		
 		async.waterfall([
 			async.constant(message.toString()),
 			async.asyncify(JSON.parse)
