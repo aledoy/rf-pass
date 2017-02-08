@@ -25,6 +25,7 @@
     "mssql": "=3.3.0",
     "node-cache": "=4.1.1",
     "raven": "=1.1.1",
+    "request": "=2.79.0",
     "serialport": "=4.0.7",
     "socket.io": "=1.7.2",
     "sqlite3": "=3.1.8"
