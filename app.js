@@ -7,6 +7,7 @@ let async = require('async');
 let request = require('request');
 let includes = require('lodash.includes');
 let isEmpty = require('lodash.isempty');
+let validUrl = require('valid-url');
 let Raven = require('raven');
 
 let currentMeeting = null;
@@ -16,17 +17,6 @@ Raven.config(process.env.SENTRY_URL, {
 }).install(function () {
 	process.exit(1);
 });
-
-let isURL = function (str) {
-	let pattern = new RegExp('^(https?:\/\/)?' + // protocol
-		'((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|' + // domain name
-		'((\d{1,3}\.){3}\d{1,3}))' + // OR ip (v4) address
-		'(\:\d+)?(\/[-a-z\d%_.~+]*)*' + // port and path
-		'(\?[;&a-z\d%_.~+=-]*)?' + // query string
-		'(\#[-a-z\d_]*)?$', 'i'); // fragment locater
-
-	return pattern.test(str);
-};
 
 async.parallel({
 	localDb: function (done) {
@@ -111,7 +101,7 @@ async.parallel({
 	// Listen for messages from the MQTT Broker
 	result.mqttClient.on('message', function (topic, message) {
 		console.log('Received New Message', message.toString());
-		
+
 		async.waterfall([
 			async.constant(message.toString()),
 			async.asyncify(JSON.parse)
@@ -135,7 +125,7 @@ async.parallel({
 
 					console.log(`Deleted participant with Attendance ID: ${parsedMessage.attendance_id}`);
 
-					if (!isEmpty(parsedMessage.id_photo) && isURL(parsedMessage.id_photo)) {
+					if (!isEmpty(parsedMessage.id_photo) && validUrl.isUri(parsedMessage.id_photo)) {
 						request.get(parsedMessage.id_photo, (err, response, body) => {
 							if (response.statusCode === 200) {
 								parsedMessage.id_photo = new Buffer(body).toString('base64');
