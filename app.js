@@ -4,7 +4,7 @@ require('dotenv').config();
 
 let path = require('path');
 let async = require('async');
-let request = require('request');
+let request = require('request').defaults({encoding: null});
 let includes = require('lodash.includes');
 let isEmpty = require('lodash.isempty');
 let validUrl = require('valid-url');
@@ -128,10 +128,7 @@ async.parallel({
 					if (!isEmpty(parsedMessage.id_photo) && validUrl.isUri(parsedMessage.id_photo)) {
 						request.get(parsedMessage.id_photo, (err, response, body) => {
 							if (response.statusCode === 200) {
-								let contents = new Buffer(body);
-								contents = contents.toString('base64');
-
-								parsedMessage.id_photo = contents;
+								parsedMessage.id_photo = new Buffer(body).toString('base64');
 
 								result.localDb.addParticipant(parsedMessage, function (err) {
 									if (err) {
