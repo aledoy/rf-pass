@@ -2,40 +2,53 @@
 
 let sql = require('mssql');
 let isEmpty = require('lodash.isempty');
+let connection;
 
 module.exports = {
 	connect: function (options, callback) {
-		sql.connect(options, callback);
+		connection = new sql.Connection(options);
+
+		connection.on('error', function (err) {
+			console.error(err);
+			throw err;
+		});
+
+		connection.connect(callback);
 	},
 	getCurrentMeeting: function (machineCode, callback) {
-		new sql.Request()
-			.input('machine_code', sql.NVarChar, machineCode)
-			.query('SELECT TOP 1 * FROM meetings WHERE machine_code = @machine_code ORDER BY date DESC', function (err, results) {
-				if (err)
-					callback(err);
-				else if (isEmpty(results))
-					callback();
-				else
-					callback(null, results[0]);
-			});
+		let request = new sql.Request(connection);
+
+		request.input('machine_code', sql.NVarChar, machineCode);
+
+		request.query('SELECT TOP 1 * FROM meetings WHERE machine_code = @machine_code ORDER BY date DESC', function (err, results) {
+			if (err)
+				callback(err);
+			else if (isEmpty(results))
+				callback();
+			else
+				callback(null, results[0]);
+		});
 	},
 	getParticipant: function (tag, callback) {
-		new sql.Request()
-			.input('rfid_tag', sql.NVarChar, tag)
-			.query('SELECT TOP 1 * FROM participants WHERE rfid_tag = @rfid_tag ORDER BY date DESC', function (err, results) {
-				if (err)
-					callback(err);
-				else if (isEmpty(results))
-					callback();
-				else
-					callback(null, results[0]);
-			});
+		let request = new sql.Request(connection);
+
+		request.input('rfid_tag', sql.NVarChar, tag);
+		
+		request.query('SELECT TOP 1 * FROM participants WHERE rfid_tag = @rfid_tag ORDER BY date DESC', function (err, results) {
+			if (err)
+				callback(err);
+			else if (isEmpty(results))
+				callback();
+			else
+				callback(null, results[0]);
+		});
 	},
 	syncLog: function (log, callback) {
-		let request = new sql.Request()
-			.input('rfid_tag', sql.NVarChar, log.rfid_tag)
-			.input('machine_code', sql.NVarChar, log.machine_code)
-			.input('date', sql.DateTime, new Date(log.date));
+		let request = new sql.Request(connection);
+
+		request.input('rfid_tag', sql.NVarChar, log.rfid_tag);
+		request.input('machine_code', sql.NVarChar, log.machine_code);
+		request.input('date', sql.DateTime, new Date(log.date));
 
 		if (log.meeting_id) {
 			request.input('meeting_id', sql.BigInt, log.meeting_id);
