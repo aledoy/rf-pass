@@ -16,46 +16,101 @@ module.exports = {
 		connection.connect(callback);
 	},
 	getCurrentMeeting: function (machineCode, callback) {
-		let request = new sql.Request(connection);
+		if (connection.connected) {
+			let request = new sql.Request(connection);
 
-		request.input('machine_code', sql.NVarChar, machineCode);
+			request.input('machine_code', sql.NVarChar, machineCode);
 
-		request.query('SELECT TOP 1 * FROM meetings WHERE machine_code = @machine_code ORDER BY date DESC', function (err, results) {
-			if (err)
-				callback(err);
-			else if (isEmpty(results))
-				callback();
-			else
-				callback(null, results[0]);
-		});
+			request.query('SELECT TOP 1 * FROM meetings WHERE machine_code = @machine_code ORDER BY date DESC', function (err, results) {
+				if (err)
+					callback(err);
+				else if (isEmpty(results))
+					callback();
+				else
+					callback(null, results[0]);
+			});
+		}
+		else {
+			connection.connect(function () {
+				let request = new sql.Request(connection);
+
+				request.input('machine_code', sql.NVarChar, machineCode);
+
+				request.query('SELECT TOP 1 * FROM meetings WHERE machine_code = @machine_code ORDER BY date DESC', function (err, results) {
+					if (err)
+						callback(err);
+					else if (isEmpty(results))
+						callback();
+					else
+						callback(null, results[0]);
+				});
+			});
+		}
 	},
 	getParticipant: function (tag, callback) {
-		let request = new sql.Request(connection);
+		if (connection.connected) {
+			let request = new sql.Request(connection);
 
-		request.input('rfid_tag', sql.NVarChar, tag);
-		
-		request.query('SELECT TOP 1 * FROM participants WHERE rfid_tag = @rfid_tag ORDER BY date DESC', function (err, results) {
-			if (err)
-				callback(err);
-			else if (isEmpty(results))
-				callback();
-			else
-				callback(null, results[0]);
-		});
+			request.input('rfid_tag', sql.NVarChar, tag);
+
+			request.query('SELECT TOP 1 * FROM participants WHERE rfid_tag = @rfid_tag ORDER BY date DESC', function (err, results) {
+				if (err)
+					callback(err);
+				else if (isEmpty(results))
+					callback();
+				else
+					callback(null, results[0]);
+			});
+		}
+		else {
+			connection.connect(function () {
+				let request = new sql.Request(connection);
+
+				request.input('rfid_tag', sql.NVarChar, tag);
+
+				request.query('SELECT TOP 1 * FROM participants WHERE rfid_tag = @rfid_tag ORDER BY date DESC', function (err, results) {
+					if (err)
+						callback(err);
+					else if (isEmpty(results))
+						callback();
+					else
+						callback(null, results[0]);
+				});
+			});
+		}
 	},
 	syncLog: function (log, callback) {
-		let request = new sql.Request(connection);
+		if (connection.connected) {
+			let request = new sql.Request(connection);
 
-		request.input('rfid_tag', sql.NVarChar, log.rfid_tag);
-		request.input('machine_code', sql.NVarChar, log.machine_code);
-		request.input('date', sql.DateTime, new Date(log.date));
+			request.input('rfid_tag', sql.NVarChar, log.rfid_tag);
+			request.input('machine_code', sql.NVarChar, log.machine_code);
+			request.input('date', sql.DateTime, new Date(log.date));
 
-		if (log.meeting_id) {
-			request.input('meeting_id', sql.BigInt, log.meeting_id);
+			if (log.meeting_id) {
+				request.input('meeting_id', sql.BigInt, log.meeting_id);
 
-			request.query('INSERT INTO meeting_logs (rfid_tag, machine_code, date, meeting_id) VALUES (@rfid_tag, @machine_code, @date, @meeting_id)', callback);
+				request.query('INSERT INTO meeting_logs (rfid_tag, machine_code, date, meeting_id) VALUES (@rfid_tag, @machine_code, @date, @meeting_id)', callback);
+			}
+			else
+				request.query('INSERT INTO meeting_logs (rfid_tag, machine_code, date) VALUES (@rfid_tag, @machine_code, @date)', callback);
 		}
-		else
-			request.query('INSERT INTO meeting_logs (rfid_tag, machine_code, date) VALUES (@rfid_tag, @machine_code, @date)', callback);
+		else {
+			connection.connect(function () {
+				let request = new sql.Request(connection);
+
+				request.input('rfid_tag', sql.NVarChar, log.rfid_tag);
+				request.input('machine_code', sql.NVarChar, log.machine_code);
+				request.input('date', sql.DateTime, new Date(log.date));
+
+				if (log.meeting_id) {
+					request.input('meeting_id', sql.BigInt, log.meeting_id);
+
+					request.query('INSERT INTO meeting_logs (rfid_tag, machine_code, date, meeting_id) VALUES (@rfid_tag, @machine_code, @date, @meeting_id)', callback);
+				}
+				else
+					request.query('INSERT INTO meeting_logs (rfid_tag, machine_code, date) VALUES (@rfid_tag, @machine_code, @date)', callback);
+			});
+		}
 	}
 };
