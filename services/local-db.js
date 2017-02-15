@@ -43,13 +43,14 @@ module.exports = {
 		}, callback);
 	},
 	getParticipant: function (tag, callback) {
-		db.get('SELECT full_name, id_photo, meeting_ids FROM participants WHERE rfid_tag = $tag LIMIT 1', {
+		db.get('SELECT full_name, id_photo, meeting_ids FROM participants WHERE rfid_tag = $tag ORDER BY id DESC LIMIT 1', {
 			$tag: tag
 		}, callback);
 	},
-	deleteParticipantByAttendanceId: function (attendanceId, callback) {
-		db.run('DELETE FROM participants WHERE attendance_id = $attendanceId', {
-			$attendanceId: attendanceId
+	deleteParticipantByAttendanceId: function (attendanceId, tag, callback) {
+		db.run('DELETE FROM participants WHERE attendance_id = $attendanceId OR rfid_tag = $tag', {
+			$attendanceId: attendanceId,
+			$tag: tag
 		}, callback);
 	},
 	log: function (machineCode, tag, meetingId, callback) {

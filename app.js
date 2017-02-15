@@ -120,7 +120,7 @@ async.parallel({
 
 				parsedMessage.meeting_ids = (!isEmpty(parsedMessage.meeting_ids)) ? parsedMessage.meeting_ids : null;
 
-				result.localDb.deleteParticipantByAttendanceId(parsedMessage.attendance_id, function (err) {
+				result.localDb.deleteParticipantByAttendanceId(parsedMessage.attendance_id, parsedMessage.rfid_tag, function (err) {
 					if (err) console.error(err);
 
 					console.log(`Deleted participant with Attendance ID: ${parsedMessage.attendance_id}`);
