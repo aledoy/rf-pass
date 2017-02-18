@@ -6,7 +6,7 @@ let mqttClient;
 module.exports = {
 	connect: function (options, callback) {
 		mqttClient = mqtt.connect(options.url, {
-			keepalive: 60 * 60 * 16,
+			keepalive: 5,
 			clientId: options.machineCode,
 			username: options.user,
 			password: options.pass,
