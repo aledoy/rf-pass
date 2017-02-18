@@ -185,9 +185,11 @@ async.parallel({
 										result.localDb.addParticipant(participant, function (err) {
 											if (err) console.error(err);
 										});
-									}
 
-									cb(err, participant);
+										cb(null, participant);
+									}
+									else
+										cb();
 								});
 							}
 							else
@@ -214,6 +216,13 @@ async.parallel({
 									<img src="/assets/headshot_empty.gif" class="wide-img main-img img-responsive center-block" />
 									<br/><br/>
 									<h1 class="participant"></h1>
+								</div>`;
+						}
+
+						else if (process.env.DEPLOYMENT === 'departure') {
+							msg = `<div class="content-bg">
+									<br/><br/><br/><br/><br/><br/>
+									<h1 class="participant">Thank You and Mabuhay</h1>
 								</div>`;
 						}
 
@@ -312,6 +321,52 @@ async.parallel({
 			});
 		});
 	}, 900000);
+
+	async.waterfall([
+		function (done) {
+			result.localDb.getLatestCloudSync(done);
+		},
+		function (cloudSync, done) {
+			let cloudId = (cloudSync && cloudSync.cloud_id) ? cloudSync.cloud_id : null;
+
+			result.cloudDb.getAllParticipants(cloudId, done);
+		}
+	], function (err, stream) {
+		let latestId;
+
+		stream.on('error', function (err) {
+			Raven.captureException(err, {
+				extra: {
+					operation: 'Bulk Participant Sync'
+				}
+			});
+		});
+
+		stream.on('row', function (participant) {
+			result.localDb.deleteParticipantByAttendanceId(participant.attendance_id, participant.rfid_tag, function (err) {
+				if (err) console.error(err);
+
+				result.localDb.addParticipant(participant, function (err) {
+					if (err)
+						console.error(err);
+					else {
+						latestId = participant.id;
+						result.localDb.logCloudSync(participant.id, function (err) {
+							if (err) console.error(err);
+						});
+					}
+				});
+			});
+		});
+
+		stream.on('done', function (affected) {
+			console.log(`Synced ${affected} rows.`);
+
+			result.localDb.logCloudSync(latestId, function (err) {
+				if (err) console.error(err);
+			});
+		});
+	});
 
 	console.log('Startup Finished.');
 });

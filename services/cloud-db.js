@@ -79,6 +79,33 @@ module.exports = {
 			});
 		}
 	},
+	getAllParticipants: function (fromId, callback) {
+		let request;
+
+		if (connection.connected) {
+			request = new sql.Request(connection);
+			request.stream = true;
+
+			if (fromId)
+				request.query(`SELECT * FROM participants WHERE id > ${fromId} ORDER BY id`);
+			else
+				request.query('SELECT * FROM participants ORDER BY id');
+
+		}
+		else {
+			connection.connect(function () {
+				request = new sql.Request(connection);
+				request.stream = true;
+
+				if (fromId)
+					request.query(`SELECT * FROM participants WHERE id > ${fromId} ORDER BY id`);
+				else
+					request.query('SELECT * FROM participants ORDER BY id');
+			});
+		}
+
+		callback(null, request);
+	},
 	syncLog: function (log, callback) {
 		if (connection.connected) {
 			let request = new sql.Request(connection);
