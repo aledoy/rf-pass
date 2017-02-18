@@ -19,6 +19,9 @@ module.exports = {
 					db.run('CREATE TABLE IF NOT EXISTS "meeting_logs" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `rfid_tag` TEXT NOT NULL, `machine_code` TEXT NOT NULL DEFAULT \'' + options.machineCode + '\', `meeting_id` TEXT, `sync` INTEGER DEFAULT 0 )', done);
 				},
 				function (done) {
+					db.run('CREATE TABLE IF NOT EXISTS "sync_log" ( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `cloud_id` INTEGER NOT NULL )', done);
+				},
+				function (done) {
 					db.run('CREATE INDEX IF NOT EXISTS `tag_index` ON "participants" (`rfid_tag` ASC)', done);
 				},
 				function (done) {
@@ -60,10 +63,20 @@ module.exports = {
 			$meetingId: meetingId
 		}, callback);
 	},
-	getUnsyncedLogs: function(callback) {
+	getUnsyncedLogs: function (callback) {
 		db.all('SELECT id, date, rfid_tag, machine_code, meeting_id FROM meeting_logs WHERE sync = 0 ORDER BY date', callback);
 	},
 	updateSyncedLogs: function (logIds, callback) {
 		db.run(`UPDATE meeting_logs SET sync = 1 WHERE id IN (${logIds})`, callback);
+	},
+	logCloudSync: function (cloudId, callback) {
+		db.run('INSERT INTO sync_log (`cloud_id`) VALUES ($cloudId)', {
+			$cloudId: cloudId
+		}, callback);
+	},
+	getLatestCloudSync: function (callback) {
+		db.get('SELECT cloud_id FROM sync_log ORDER BY id DESC LIMIT 1', function (err, record) {
+			callback(err, record || null);
+		});
 	}
 };
