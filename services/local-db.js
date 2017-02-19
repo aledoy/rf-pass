@@ -37,11 +37,15 @@ module.exports = {
 		});
 	},
 	addParticipant: function (participant, callback) {
+		let tag;
+
+		if (participant && participant.rfid_tag) tag = participant.rfid_tag.toUpperCase();
+
 		db.run('INSERT INTO participants (`attendance_id`, `full_name`, `id_photo`, `rfid_tag`, `meeting_ids`) VALUES ($attendance_id, $full_name, $id_photo, $rfid_tag, $meeting_ids)', {
 			$attendance_id: participant.attendance_id,
 			$full_name: participant.full_name,
 			$id_photo: participant.id_photo,
-			$rfid_tag: participant.rfid_tag,
+			$rfid_tag: tag,
 			$meeting_ids: participant.meeting_ids
 		}, callback);
 	},
@@ -51,6 +55,8 @@ module.exports = {
 		}, callback);
 	},
 	deleteParticipantByAttendanceId: function (attendanceId, tag, callback) {
+		if (tag) tag = tag.toUpperCase();
+
 		db.run('DELETE FROM participants WHERE attendance_id = $attendanceId OR rfid_tag = $tag', {
 			$attendanceId: attendanceId,
 			$tag: tag
