@@ -48,6 +48,8 @@ module.exports = {
 		}
 	},
 	getParticipant: function (tag, callback) {
+		if (tag) tag = tag.toUpperCase();
+
 		if (connection.connected) {
 			let request = new sql.Request(connection);
 
