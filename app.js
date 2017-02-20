@@ -227,7 +227,7 @@ async.parallel({
 						}
 
 						// If record is found and authorized for the current meeting, show the participant info
-						else if (!isEmpty(participant) && includes(meetings, currentMeeting)) {
+						else if (!isEmpty(participant) && (includes(meetings, currentMeeting) || includes(meetings, '0'))) {
 							msg = `<div class="content-bg">
 									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
 									<br/><br/><br/><br/><br/><br/>
