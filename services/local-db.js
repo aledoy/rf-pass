@@ -54,6 +54,15 @@ module.exports = {
 			$tag: tag
 		}, callback);
 	},
+	getAllParticipants: function (callback) {
+		db.all('SELECT id, rfid_tag FROM participants', callback);
+	},
+	updateParticipantTag: function (id, tag, callback) {
+		db.run(`UPDATE participants SET rfid_tag = $tag WHERE id = $id`, {
+			$id: id,
+			$tag: tag
+		}, callback);
+	},
 	deleteParticipantByAttendanceId: function (attendanceId, tag, callback) {
 		if (tag) tag = tag.toUpperCase();
 
@@ -84,5 +93,8 @@ module.exports = {
 		db.get('SELECT cloud_id FROM sync_log ORDER BY id DESC LIMIT 1', function (err, record) {
 			callback(err, record || null);
 		});
+	},
+	deleteAllCloudSyncLogs: function (callback) {
+		db.run('DELETE FROM sync_log', callback);
 	}
 };
