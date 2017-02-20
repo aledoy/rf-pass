@@ -10,7 +10,7 @@ let isEmpty = require('lodash.isempty');
 let validUrl = require('valid-url');
 let Raven = require('raven');
 
-let currentMeeting = null;
+let currentMeeting = process.env.CURRENT_MEETING;
 
 Raven.config(process.env.SENTRY_URL, {
 	captureUnhandledRejections: true
