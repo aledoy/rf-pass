@@ -86,7 +86,7 @@ async.parallel({
 	// Get the current meeting for the device
 	result.cloudDb.getCurrentMeeting(process.env.MACHINE_CODE, function (err, meeting) {
 		if (!err && !isEmpty(meeting)) {
-			currentMeeting = `${meeting.meeting_id}`;
+			currentMeeting = `${meeting.meeting_id || ''}`;
 			console.log(`Current meeting is now ${currentMeeting}`);
 		}
 		else if (err) {
@@ -110,7 +110,7 @@ async.parallel({
 
 			// If type is meetinginfo, set the current meeting
 			if (parsedMessage.type === 'meetinginfo') {
-				currentMeeting = `${parsedMessage.$meeting_id}`;
+				currentMeeting = `${parsedMessage.$meeting_id || ''}`;
 				console.log(`Received New Meeting Configuration. Current meeting is now ${currentMeeting}`);
 			}
 
