@@ -362,8 +362,12 @@ async.parallel({
 		stream.on('done', function (affected) {
 			console.log(`Synced ${affected} rows.`);
 
-			result.localDb.logCloudSync(latestId, function (err) {
+			result.localDb.deleteAllCloudSyncLogs(function (err) {
 				if (err) console.error(err);
+
+				result.localDb.logCloudSync(latestId, function (err) {
+					if (err) console.error(err);
+				});
 			});
 		});
 	});
