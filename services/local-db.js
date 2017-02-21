@@ -50,7 +50,7 @@ module.exports = {
 		}, callback);
 	},
 	getParticipant: function (tag, callback) {
-		db.get('SELECT full_name, rfid_tag, id_photo, group_concat(meeting_ids) as meeting_ids FROM participants WHERE rfid_tag = $tag GROUP BY full_name, rfid_tag, id_photo LIMIT 1', {
+		db.get('SELECT id, full_name, rfid_tag, id_photo, group_concat(meeting_ids) as meeting_ids FROM participants WHERE rfid_tag = $tag GROUP BY full_name, rfid_tag, id_photo ORDER BY id DESC LIMIT 1', {
 			$tag: tag
 		}, callback);
 	},
