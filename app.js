@@ -222,7 +222,14 @@ async.parallel({
 						else if (process.env.DEPLOYMENT === 'departure') {
 							msg = `<div class="content-bg">
 									<br/><br/><br/><br/><br/><br/>
-									<h1 class="participant">Thank You and Mabuhay</h1>
+									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+									<br/><br/><br/><br/><br/><br/>
+									<br/><br/><br/><br/><br/><br/>
+									<h1 class="participant" style="font-size: 100px; font-family: 'montserrat';">Thank You</h1>
+									<br/><br/><br/>
+									<h1 class="participant" style="font-size: 100px; font-family: 'montserrat';">&</h1>
+									<br/><br/><br/>
+									<h1 class="participant" style="font-size: 100px; font-family: 'montserrat';">Mabuhay</h1>
 								</div>`;
 						}
 
@@ -232,8 +239,9 @@ async.parallel({
 									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
 									<br/><br/><br/><br/><br/><br/>
 									<img src="data:;base64,${participant.id_photo}" class="wide-img main-img img-responsive center-block" />
-									<br/><br/>
+									<br/><br/><br/>
 									<h1 class="participant">${participant.full_name}</h1>
+									<br/><br/><br/><br/><br/><br/><br/><br/><br/>
 								</div>`;
 						}
 
