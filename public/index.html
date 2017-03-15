@@ -6,20 +6,31 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/bootstrap.min.css">
 	<style>
-		.main-img {
-			outline: 1 px solid darkblue;
-		}
-		.wide-img {
-			width:70%;
+		@font-face {
+			font-family: 'montserrat';
+			src: url('assets/montserrat-regular-webfont.ttf') format('truetype');
 		}
 
-		.participant{
-			font-size:4em;
-			color:blue;
+		body {
+			font-family: 'montserrat';
+		}
+
+		.main-img {
+			outline: 1px solid darkblue;
+		}
+
+		.wide-img {
+			width: 70%;
+		}
+
+		.participant {
+			font-size: 4em;
+			font-family: "montserrat";
+			color: black;
 			padding: Auto 10px;
 		}
 
-		.content-bg{
+		.content-bg {
 			background-color: white;
 		}
 
@@ -33,16 +44,17 @@
 	</style>
 </head>
 <body>
-<div class="container" id="main">
-	<div class="row">
-		<div id="current" class="text-center">
+	<div class="container" id="main">
+		<div class="row">
+			<div id="current" class="text-center">
+			</div>
+			asdasdasd
 		</div>
 	</div>
-</div>
-<script src="assets/jquery.min.js"></script>
-<script src="assets/bootstrap.min.js"></script>
-<script src="assets/socket.io.min.js"></script>
-<script type="text/javascript" src="assets/main.js"></script>
+	<script src="assets/jquery.min.js"></script>
+	<script src="assets/bootstrap.min.js"></script>
+	<script src="assets/socket.io.min.js"></script>
+	<script type="text/javascript" src="assets/main.js"></script>
 </body>
 </html>
 
