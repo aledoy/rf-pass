@@ -225,11 +225,11 @@ async.parallel({
 									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
 									<br/><br/><br/><br/><br/><br/>
 									<br/><br/><br/><br/><br/><br/>
-									<h1 class="participant" style="font-size: 100px; font-family: 'montserrat';">Thank You</h1>
+									<h1 class="participant" style="font-size: 100px; ">THANK YOU</h1>
 									<br/><br/><br/>
-									<h1 class="participant" style="font-size: 100px; font-family: 'montserrat';">&</h1>
+									<h1 class="participant" style="font-size: 100px; ">&</h1>
 									<br/><br/><br/>
-									<h1 class="participant" style="font-size: 100px; font-family: 'montserrat';">Mabuhay</h1>
+									<h1 class="participant" style="font-size: 100px; ">MABUHAY!</h1>
 								</div>`;
 						}
 
@@ -237,11 +237,15 @@ async.parallel({
 						else if (!isEmpty(participant) && (includes(meetings, currentMeeting) || includes(meetings, '0'))) {
 							msg = `<div class="content-bg">
 									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-									<br/><br/><br/><br/><br/><br/>
+									<br/><br/><br/>
+									<h1 class="participant" style="font-size: 120px; ">WELCOME</h1>
+									<br/><br/><br/>									
 									<img src="data:;base64,${participant.id_photo}" class="wide-img main-img img-responsive center-block" />
 									<br/><br/><br/>
 									<h1 class="participant">${participant.full_name}</h1>
-									<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+									<br/><br/><br/><br/><br/><br/>
+									<h1 class="participant" style="font-size: 100px; color: #800000; ">MABUHAY!</h1>
+									<br/><br/><br/>
 								</div>`;
 						}
 
