@@ -211,9 +211,11 @@ async.parallel({
 							console.error(err);
 
 							msg = `<div class="content-bg">
-									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+									<br/><br/>
+									<img src="/assets/ASEAN_LOGO_bird.png"  class="aseanbird-img img-responsive center-block"/>
+									<img src="/assets/ASEAN_LOGO_50.png"  class="asean50-img img-responsive center-block"/>
 									<br/><br/><br/><br/><br/><br/>
-									<img src="/assets/headshot_empty.gif" class="wide-img main-img img-responsive center-block" />
+									<img src="/assets/headshot_empty.gif" class="wide-img img-responsive center-block" />
 									<br/><br/>
 									<h1 class="participant"></h1>
 								</div>`;
@@ -222,7 +224,8 @@ async.parallel({
 						else if (process.env.DEPLOYMENT === 'departure') {
 							msg = `<div class="content-bg">
 									<br/><br/><br/><br/><br/><br/>
-									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+									<img src="/assets/ASEAN_LOGO_bird.png"  class="aseanbird-img img-responsive center-block"/>
+									<img src="/assets/ASEAN_LOGO_50.png"  class="asean50-img img-responsive center-block"/>
 									<br/><br/><br/><br/><br/><br/>
 									<br/><br/><br/><br/><br/><br/>
 									<h1 class="participant" style="font-size: 100px; ">THANK YOU</h1>
@@ -236,25 +239,29 @@ async.parallel({
 						// If record is found and authorized for the current meeting, show the participant info
 						else if (!isEmpty(participant) && (includes(meetings, currentMeeting) || includes(meetings, '0'))) {
 							msg = `<div class="content-bg">
-									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
-									<br/><br/><br/>
-									<h1 class="participant" style="font-size: 120px; ">WELCOME</h1>
-									<br/><br/><br/>									
-									<img src="data:;base64,${participant.id_photo}" class="wide-img main-img img-responsive center-block" />
-									<br/><br/><br/>
+									<br/>
+									<img src="/assets/ASEAN_LOGO_bird.png"  class="aseanbird-img img-responsive center-block"/>
+									<img src="/assets/ASEAN_LOGO_50.png"  class="asean50-img img-responsive center-block"/>
+									<br/>
+									<h1 class="greet" style="font-size: 170px; ">Welcome</h1>
+									<br/>									
+									<img src="data:;base64,${participant.id_photo}" class="wide-img img-responsive center-block" />
+									<br/>
 									<h1 class="participant">${participant.full_name}</h1>
-									<br/><br/><br/><br/><br/><br/>
-									<h1 class="participant" style="font-size: 100px; color: #800000; ">MABUHAY!</h1>
-									<br/><br/><br/>
+									<br/><br/>
+									<h1 class="greet" style="font-size: 150px; color: red; ">Mabuhay!</h1>
+									
 								</div>`;
 						}
 
 						// Else show an avatart
 						else {
 							msg = `<div class="content-bg">
-									<img src="/assets/asean_logos.png"  class="wide-img main-img img-responsive center-block"/>
+									<br/><br/>
+									<img src="/assets/ASEAN_LOGO_bird.png"  class="aseanbird-img img-responsive center-block"/>
+									<img src="/assets/ASEAN_LOGO_50.png"  class="asean50-img img-responsive center-block"/>
 									<br/><br/><br/><br/><br/><br/>
-									<img src="/assets/headshot_empty.gif" class="wide-img main-img img-responsive center-block" />
+									<img src="/assets/headshot_empty.gif" class="wide-img img-responsive center-block" />
 									<br/><br/>
 									<h1 class="participant">${(participant) ? participant.full_name : ''}</h1>
 								</div>`;

@@ -11,8 +11,28 @@
 			src: url('assets/montserrat-regular-webfont.ttf') format('truetype');
 		}
 
+		@font-face {
+			font-family: 'rage';
+			src: url('assets/RAGE.TTF') format('truetype');
+		}
+
 		body {
-			font-family: 'montserrat';
+			font-family: 'rage';
+		}
+
+		.aseanbird-img {
+			width: 15%;
+			height: 15%;
+		}
+
+		.asean50-img {
+			width: 50%;
+			height: 50%;
+		}
+
+		.main-img {
+			width: 70%;
+			height: 70%;
 		}
 
 		.wide-img {
@@ -21,7 +41,13 @@
 
 		.participant {
 			font-size: 4em;
-			font-family: "montserrat";
+			font-family: 'montserrat';
+			color: black;
+			padding: Auto 10px;
+		}
+
+		.greet {
+			font-family: 'rage';
 			color: black;
 			padding: Auto 10px;
 		}
@@ -31,7 +57,7 @@
 		}
 
 		body {
-			background-image: url('/assets/ASEAN_LOGO.png');
+			background-image: url('/assets/ASEAN_LOGOv2.png');
 			background-size: 950px Auto;
 			background-repeat: no-repeat;
 			background-attachment: fixed;
@@ -40,16 +66,16 @@
 	</style>
 </head>
 <body>
-	<div class="container" id="main">
-		<div class="row">
-			<div id="current" class="text-center">
-			</div>
+<div class="container" id="main">
+	<div class="row">
+		<div id="current" class="text-center">
 		</div>
 	</div>
-	<script src="assets/jquery.min.js"></script>
-	<script src="assets/bootstrap.min.js"></script>
-	<script src="assets/socket.io.min.js"></script>
-	<script type="text/javascript" src="assets/main.js"></script>
+</div>
+<script src="assets/jquery.min.js"></script>
+<script src="assets/bootstrap.min.js"></script>
+<script src="assets/socket.io.min.js"></script>
+<script type="text/javascript" src="assets/main.js"></script>
 </body>
 </html>
 
