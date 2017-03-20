@@ -215,7 +215,7 @@ async.parallel({
 									<img src="/assets/ASEAN_LOGO_bird.png"  class="aseanbird-img img-responsive center-block"/>
 									<img src="/assets/ASEAN_LOGO_50.png"  class="asean50-img img-responsive center-block"/>
 									<br/><br/><br/><br/><br/><br/>
-									<img src="/assets/headshot_empty.gif" class="wide-img img-responsive center-block" />
+									<img src="/assets/headshot_empty.gif" class="photo center-block" />
 									<br/><br/>
 									<h1 class="participant"></h1>
 								</div>`;
@@ -245,7 +245,7 @@ async.parallel({
 									<br/>
 									<h1 class="greet" style="font-size: 170px; ">Welcome</h1>
 									<br/>									
-									<img src="data:;base64,${participant.id_photo}" class="wide-img img-responsive center-block" />
+									<img src="data:;base64,${participant.id_photo}" class="photo center-block" />
 									<br/>
 									<h1 class="participant">${participant.full_name}</h1>
 									<br/><br/>
@@ -261,7 +261,7 @@ async.parallel({
 									<img src="/assets/ASEAN_LOGO_bird.png"  class="aseanbird-img img-responsive center-block"/>
 									<img src="/assets/ASEAN_LOGO_50.png"  class="asean50-img img-responsive center-block"/>
 									<br/><br/><br/><br/><br/><br/>
-									<img src="/assets/headshot_empty.gif" class="wide-img img-responsive center-block" />
+									<img src="/assets/headshot_empty.gif" class="photo center-block" />
 									<br/><br/>
 									<h1 class="participant">${(participant) ? participant.full_name : ''}</h1>
 								</div>`;
